@@ -20,6 +20,8 @@ export const addCategory = async (req, res) => {
       });
     }
 
+    //comment
+
     const category = await Category.create({
       name,
       description,
