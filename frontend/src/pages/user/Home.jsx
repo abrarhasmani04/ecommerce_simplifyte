@@ -1,9 +1,19 @@
+import Hero from "../../components/home/Hero";
+import Categories from "../../components/home/Categories";
+import FlashSale from "../../components/home/FlashSale";
+import FeaturedProducts from "../../components/home/FeaturedProducts";
+import Brands from "../../components/home/Brands";
+import Newsletter from "../../components/home/Newsletter";
+
 const Home = () => {
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold">Welcome to Simplifyte</h1>
-
-      <p className="mt-4">Home Page</p>
+    <div className="mx-auto max-w-7xl px-6 py-10">
+      <Hero />
+      <Categories />
+      <FlashSale />
+      <FeaturedProducts />
+      <Brands />
+      <Newsletter />
     </div>
   );
 };

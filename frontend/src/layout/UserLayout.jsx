@@ -1,14 +1,19 @@
 import { Outlet } from "react-router-dom";
 
+import Navbar from "../components/navbar/Navbar";
+import Footer from "../components/footer/Footer";
+
 const UserLayout = () => {
   return (
-    <>
-      <h2>User Navbar</h2>
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <Navbar />
 
-      <Outlet />
+      <main className="flex-1">
+        <Outlet />
+      </main>
 
-      <h2>User Footer</h2>
-    </>
+      <Footer />
+    </div>
   );
 };
 
