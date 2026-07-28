@@ -263,9 +263,7 @@ const verifyEmail = async (req,res)=>{
     })
 }
 
-const logoutUser = async ()=>{
 
-}
 
 const loginWithOTP = async (req, res) => {
   try {
@@ -553,6 +551,30 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const logoutUser = (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false,
+    });
 
-export {registerUser,verifyEmail,loginUser,resetPassword,verifyLoginOTP,forgotPassword,loginWithOTP
+    return res.status(200).json({
+        success: true,
+        message: "Logout successful",
+    });
+};
+
+
+const getCurrentUser = async (req, res) => {
+    return res.status(200).json({
+        success: true,
+        user: req.user,
+    });
+};
+
+
+
+
+
+export {logoutUser,getCurrentUser,registerUser,verifyEmail,loginUser,resetPassword,verifyLoginOTP,forgotPassword,loginWithOTP
 }

@@ -4,6 +4,12 @@ import connectDB from "./config/db.js";
 import authRoute from "./routes/authRoute.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import categoryRoute from "./routes/categoryRoute.js";
+import productRoute from "./routes/productRoute.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+
 
 dotenv.config();
 const app = express();
@@ -18,9 +24,16 @@ app.use(
   }),
 );
 app.use("/api", authRoute);
+app.use("/api",categoryRoute)
+app.use('/api/product',productRoute)
+
 app.get("/", (req, res) => {
   res.send("helloww");
 });
+
+
+
+
 
 const PORT = process.env.PORT || 3000;
 
