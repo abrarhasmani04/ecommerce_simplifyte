@@ -1,18 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 import Logo from "../../../components/common/Logo";
-import Button from "../../../components/common/Button";
 import Input from "../../../components/common/Input";
 import PasswordInput from "../../../components/common/PasswordInput";
+import Button from "../../../components/common/Button";
 import Divider from "../../../components/common/Divider";
 
 import api from "../../../api/axios";
+import { ROUTES } from "../../../constants/routes";
+import { setUser } from "../authSlice";
 
 const Login = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate("/home");
+
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -27,36 +32,34 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const response = await api.post("/user/login", {
-        email: data.email,
-        password: data.password,
-      });
+      const response = await api.post(
+        "/user/login",
 
-      const result = response.data;
+        {
+          email: data.email,
 
-      console.log("Login Response:", result);
+          password: data.password,
+        },
+      );
 
-      if (result.token) {
-        localStorage.setItem("token", result.token);
-      }
-
-      if (result.user) {
-        localStorage.setItem("user", JSON.stringify(result.user));
+      // Store user in Redux
+      if (response.data.user) {
+        dispatch(setUser(response.data.user));
       }
 
       toast.success("Login Successful");
 
       reset();
 
-      const role = result.user?.role?.toUpperCase();
+      const role = response.data.user?.role?.toUpperCase();
 
       setTimeout(() => {
         if (role === "ADMIN") {
-          navigate("/admin/dashboard", { replace: true });
+          navigate(ROUTES.ADMIN_DASHBOARD, { replace: true });
         } else if (role === "SELLER") {
-          navigate("/seller/dashboard", { replace: true });
+          navigate(ROUTES.SELLER_DASHBOARD, { replace: true });
         } else {
-          navigate("/home", { replace: true });
+          navigate(ROUTES.HOME, { replace: true });
         }
       }, 1000);
     } catch (error) {
@@ -82,15 +85,26 @@ const Login = () => {
         Login to continue shopping
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+
+        className="space-y-5"
+      >
         <div>
           <Input
             label="Email"
+
             type="email"
+
             placeholder="Enter your email"
-            {...register("email", {
-              required: "Email is required",
-            })}
+
+            {...register(
+              "email",
+
+              {
+                required: "Email is required",
+              },
+            )}
           />
 
           {errors.email && (
@@ -101,10 +115,16 @@ const Login = () => {
         <div>
           <PasswordInput
             label="Password"
+
             placeholder="Enter your password"
-            {...register("password", {
-              required: "Password is required",
-            })}
+
+            {...register(
+              "password",
+
+              {
+                required: "Password is required",
+              },
+            )}
           />
 
           {errors.password && (
@@ -114,34 +134,50 @@ const Login = () => {
           )}
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between items-center">
           <label className="flex items-center gap-2 text-sm text-gray-600">
-            <input type="checkbox" className="accent-blue-600" />
+            <input
+              type="checkbox"
+
+              className="accent-blue-600"
+            />
             Remember me
           </label>
 
           <Link
-            to="/forgot-password"
+            to={ROUTES.FORGOT_PASSWORD}
+
             className="text-sm text-blue-600 hover:underline"
           >
             Forgot Password?
           </Link>
         </div>
 
-        <Button type="submit" disabled={loading}>
+        <Button
+          type="submit"
+
+          disabled={loading}
+        >
           {loading ? "Logging in..." : "Login"}
         </Button>
 
         <Divider />
 
-        <Link to="/login-otp">
-          <Button variant="secondary">Login with OTP</Button>
+        <Link to={ROUTES.LOGIN_OTP}>
+          <Button
+            type="button"
+
+            variant="secondary"
+          >
+            Login with OTP
+          </Button>
         </Link>
 
         <p className="text-center text-sm text-gray-600">
           Don't have an account?
           <Link
-            to="/register"
+            to={ROUTES.REGISTER}
+
             className="ml-1 font-semibold text-blue-600 hover:underline"
           >
             Register

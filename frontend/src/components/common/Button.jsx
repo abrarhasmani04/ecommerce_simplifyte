@@ -1,30 +1,38 @@
 const Button = ({
   children,
   type = "button",
+  disabled = false,
   variant = "primary",
-  className = "",
-  ...props
+  onClick,
 }) => {
-  const base =
-    "w-full rounded-xl py-3 font-semibold transition-all duration-300";
 
-  const styles = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700",
+  const styles =
+    variant === "secondary"
+      ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+      : "bg-blue-600 text-white hover:bg-blue-700";
 
-    secondary: "border border-gray-300 bg-white hover:bg-gray-100",
-
-    danger: "bg-red-600 text-white hover:bg-red-700",
-  };
 
   return (
     <button
       type={type}
-      className={`${base} ${styles[variant]} ${className}`}
-      {...props}
+      disabled={disabled}
+      onClick={onClick}
+      className={`
+        w-full
+        py-3
+        rounded-lg
+        font-semibold
+        transition
+        duration-200
+        ${styles}
+        disabled:opacity-50
+        disabled:cursor-not-allowed
+      `}
     >
       {children}
     </button>
   );
 };
+
 
 export default Button;

@@ -1,11 +1,11 @@
-const Divider = ({ text = "OR" }) => {
+const Divider = () => {
   return (
-    <div className="flex items-center gap-4 my-6">
-      <hr className="flex-1" />
+    <div className="flex items-center gap-3 my-5">
+      <div className="flex-1 h-px bg-gray-300"></div>
 
-      <span className="text-sm text-gray-400">{text}</span>
+      <span className="text-sm text-gray-500">OR</span>
 
-      <hr className="flex-1" />
+      <div className="flex-1 h-px bg-gray-300"></div>
     </div>
   );
 };

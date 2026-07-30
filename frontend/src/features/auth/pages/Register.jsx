@@ -21,17 +21,18 @@ const Register = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // Handle Input Change
+  // Input Change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
+
       [name]: value,
     }));
   };
 
-  // Handle Register
+  // Register Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -42,36 +43,38 @@ const Register = () => {
       !formData.confirmPassword
     ) {
       toast.warning("Please fill all fields.");
+
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match.");
+
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await api.post("/user/register", {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      });
+      const response = await api.post(
+        "/user/register",
 
-      console.log(response.data);
+        {
+          name: formData.name,
+
+          email: formData.email,
+
+          password: formData.password,
+        },
+      );
+
+      console.log("Register Response:", response.data);
 
       toast.success("Registration successful! OTP sent to your email.");
 
-      setTimeout(() => {
-        navigate("/verify-email", {
-          state: {
-            email: formData.email,
-          },
-        });
-      }, 1500);
+      navigate("/verify-email", { state: { email: formData.email } });
     } catch (error) {
-      console.error(error);
+      console.error("Register Error:", error);
 
       toast.error(
         error.response?.data?.message ||
@@ -94,50 +97,77 @@ const Register = () => {
         Join Simplifyte today
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form
+        onSubmit={handleSubmit}
+
+        className="space-y-5"
+      >
         <Input
           label="Full Name"
+
           name="name"
+
           type="text"
+
           placeholder="Enter your full name"
+
           value={formData.name}
+
           onChange={handleChange}
         />
 
         <Input
           label="Email"
+
           name="email"
+
           type="email"
+
           placeholder="Enter your email"
+
           value={formData.email}
+
           onChange={handleChange}
         />
 
         <PasswordInput
           label="Password"
+
           name="password"
+
           placeholder="Enter your password"
+
           value={formData.password}
+
           onChange={handleChange}
         />
 
         <PasswordInput
           label="Confirm Password"
+
           name="confirmPassword"
+
           placeholder="Confirm your password"
+
           value={formData.confirmPassword}
+
           onChange={handleChange}
         />
 
-        <Button type="submit" disabled={loading}>
+        <Button
+          type="submit"
+
+          disabled={loading}
+        >
           {loading ? "Creating Account..." : "Create Account"}
         </Button>
 
         <p className="text-center text-sm text-gray-600">
-          Already have an account?{" "}
+          Already have an account?
           <Link
             to="/login"
-            className="font-semibold text-blue-600 hover:underline"
+
+            className="ml-1 font-semibold text-blue-600 hover:underline"
           >
             Login
           </Link>
