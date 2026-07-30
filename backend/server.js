@@ -7,7 +7,10 @@ import cookieParser from "cookie-parser";
 import categoryRoute from "./routes/categoryRoute.js";
 import productRoute from "./routes/productRoute.js";
 import path from "path";
-import { fileURLToPath } from "url";
+import cartRoute from "./routes/cartRoute.js";
+import addressRoute from "./routes/addressRoute.js";
+import orderRoute from "./routes/orderRoute.js";
+
 
 
 
@@ -26,6 +29,9 @@ app.use(
 app.use("/api", authRoute);
 app.use("/api",categoryRoute)
 app.use('/api/product',productRoute)
+app.use('/api/cart',cartRoute)
+app.use('/api/address',addressRoute)
+app.use('/api/orders',orderRoute)
 
 app.get("/", (req, res) => {
   res.send("helloww");

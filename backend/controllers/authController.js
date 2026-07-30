@@ -566,6 +566,13 @@ const logoutUser = (req, res) => {
 
 
 const getCurrentUser = async (req, res) => {
+  const token = req.cookie.jwt;
+  if(!token)
+  {
+    return res.status(200).json({
+      user:null
+    })
+  }
     return res.status(200).json({
         success: true,
         user: req.user,

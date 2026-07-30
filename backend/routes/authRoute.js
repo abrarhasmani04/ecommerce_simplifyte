@@ -12,5 +12,5 @@ authRoute.post('/user/verify-login-otp',verifyLoginOTP)
 authRoute.post('/user/forgot-password',forgotPassword)
 authRoute.post('/user/reset-password',resetPassword)
 authRoute.post('/user/logout',logoutUser)
-authRoute.get("/me", authMiddleware, getCurrentUser);
+authRoute.get("/user/me", authMiddleware, getCurrentUser);
 export default authRoute
