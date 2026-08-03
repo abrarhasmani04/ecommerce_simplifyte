@@ -80,16 +80,119 @@ export const addProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find()
+    const {
+      keyword,
+      category,
+      brand,
+      minPrice,
+      maxPrice,
+      rating,
+      sort,
+      page = 1,
+      limit = 12,
+    } = req.query;
+
+    // Build filter object
+    const filter = {
+      isActive: true,
+    };
+
+    // Search by product name
+    if (keyword) {
+      filter.name = {
+        $regex: keyword,
+        $options: "i",
+      };
+    }
+
+    // Filter by category
+    if (category) {
+      filter.category = category;
+    }
+
+    // Filter by brand
+    if (brand) {
+      filter.brand = brand;
+    }
+
+    // Filter by price range
+    if (minPrice || maxPrice) {
+      filter.price = {};
+
+      if (minPrice) {
+        filter.price.$gte = Number(minPrice);
+      }
+
+      if (maxPrice) {
+        filter.price.$lte = Number(maxPrice);
+      }
+    }
+
+    // Filter by minimum rating
+    if (rating) {
+      filter.ratings = {
+        $gte: Number(rating),
+      };
+    }
+
+    // Sorting
+    let sortOption = {};
+
+    switch (sort) {
+      case "price_asc":
+        sortOption.price = 1;
+        break;
+
+      case "price_desc":
+        sortOption.price = -1;
+        break;
+
+      case "rating":
+        sortOption.ratings = -1;
+        break;
+
+      case "name_asc":
+        sortOption.name = 1;
+        break;
+
+      case "name_desc":
+        sortOption.name = -1;
+        break;
+
+      case "oldest":
+        sortOption.createdAt = 1;
+        break;
+
+      default:
+        // Newest first
+        sortOption.createdAt = -1;
+    }
+
+    // Pagination
+    const currentPage = Number(page);
+    const perPage = Number(limit);
+    const skip = (currentPage - 1) * perPage;
+
+    // Total matching products
+    const totalProducts = await Product.countDocuments(filter);
+
+    // Fetch products
+    const products = await Product.find(filter)
       .populate("category", "name")
-      .populate("seller", "name email");
+      .populate("seller", "name email")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(perPage);
 
     return res.status(200).json({
       success: true,
+      totalProducts,
+      currentPage,
+      totalPages: Math.ceil(totalProducts / perPage),
       count: products.length,
       products,
     });
-    
+
   } catch (error) {
     return res.status(500).json({
       success: false,

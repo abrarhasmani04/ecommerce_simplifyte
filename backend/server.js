@@ -10,6 +10,11 @@ import path from "path";
 import cartRoute from "./routes/cartRoute.js";
 import addressRoute from "./routes/addressRoute.js";
 import orderRoute from "./routes/orderRoute.js";
+import paymentRoute from "./routes/paymentRoute.js";
+import reviewRoute from "./routes/reviewRoute.js";
+import wishlistRoute from "./routes/wishlistRoute.js";
+import adminRoute from "./routes/adminRoute.js";
+import sellerAppRoute from './routes/sellerAppRouter.js'
 
 
 
@@ -32,6 +37,11 @@ app.use('/api/product',productRoute)
 app.use('/api/cart',cartRoute)
 app.use('/api/address',addressRoute)
 app.use('/api/orders',orderRoute)
+app.use('/api/payment',paymentRoute)
+app.use('/api/reviews',reviewRoute)
+app.use('/api/wishlist',wishlistRoute)
+app.use('/api/admin',adminRoute)
+app.use('/api/seller',sellerAppRoute)
 
 app.get("/", (req, res) => {
   res.send("helloww");
