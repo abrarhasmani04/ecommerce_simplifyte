@@ -1,5 +1,5 @@
 import express from 'express'
-import cloudinary from "../config/cloudinary.js";
+
 import { addProduct,getProducts,getProductById, updateProduct, deleteProduct,} from '../controllers/productController.js'
 import authMiddleware from "../middlewares/authMiddleware.js";
 import authorizeRoles from "../middlewares/authorizeRoles.js";

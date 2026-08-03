@@ -7,7 +7,8 @@ const cartRoute = express.Router()
 cartRoute.post('/add',authMiddleware,addToCart)
 cartRoute.get('/',authMiddleware,getMyCart)
 cartRoute.put('/:id',authMiddleware,updateCartQuantity)
-cartRoute.delete('/:id',authMiddleware,removeCartItem)
 cartRoute.delete('/clear',authMiddleware,deleteAllCart)
+cartRoute.delete('/:id',authMiddleware,removeCartItem)
+
 
 export default cartRoute

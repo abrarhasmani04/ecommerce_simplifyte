@@ -31,17 +31,17 @@ const orderItemSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema(
   {
-    // Who placed the order
+    // User who placed the order
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    // Products purchased
+    // Purchased Products
     orderItems: [orderItemSchema],
 
-    // Selected delivery address
+    // Shipping Address
     shippingAddress: {
       fullName: String,
       phone: String,
@@ -76,17 +76,34 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Payment
+    // Payment Method
     paymentMethod: {
       type: String,
       enum: ["COD", "Razorpay", "Stripe"],
       default: "COD",
     },
 
+    // Payment Status
     paymentStatus: {
       type: String,
       enum: ["Pending", "Paid", "Failed"],
       default: "Pending",
+    },
+
+    // Razorpay Details
+    razorpayOrderId: {
+      type: String,
+      default: "",
+    },
+
+    razorpayPaymentId: {
+      type: String,
+      default: "",
+    },
+
+    razorpaySignature: {
+      type: String,
+      default: "",
     },
 
     // Order Status
@@ -103,9 +120,15 @@ const orderSchema = new mongoose.Schema(
       default: "Pending",
     },
 
-    paidAt: Date,
+    // Payment Time
+    paidAt: {
+      type: Date,
+    },
 
-    deliveredAt: Date,
+    // Delivery Time
+    deliveredAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
