@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X, Home, ShoppingCart, Heart, User, Package, LogOut } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/features/auth/authSlice";
 
 const NAV_LINKS = [
@@ -17,6 +17,9 @@ const MobileMenu = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const cartCount = useSelector((state) =>
+    state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
+  );
 
   const handleLogout = () => {
     dispatch(logout());
@@ -74,7 +77,14 @@ const MobileMenu = () => {
                     : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                   }`}
               >
-                <Icon size={18} className="shrink-0" />
+                <span className="relative shrink-0">
+                  <Icon size={18} />
+                  {to === "/cart" && cartCount > 0 && (
+                    <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white">
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  )}
+                </span>
                 {label}
               </Link>
             );

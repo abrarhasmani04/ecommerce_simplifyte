@@ -10,9 +10,9 @@ import PasswordInput from "../../../components/common/PasswordInput";
 import Button from "../../../components/common/Button";
 import Divider from "../../../components/common/Divider";
 
-import api from "../../../api/axios";
+import api from "@/services/axios";
 import { ROUTES } from "../../../constants/routes";
-import { setUser } from "../authSlice";
+import { setUser } from "@/features/auth/authSlice";
 
 const Login = () => {
   const navigate = useNavigate("/home");

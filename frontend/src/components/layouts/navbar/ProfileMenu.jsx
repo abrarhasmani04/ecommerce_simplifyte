@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User, ShoppingBag, Heart, LogOut } from "lucide-react";
+import { User, ShoppingBag, Heart, LogOut, Store } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/features/auth/authSlice";
-import api from "@/api/axios";
+import api from "@/services/axios";
 
 const ProfileMenu = () => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const dispatch = useDispatch();
-  const navigate = useNavigate("/login");
+  const navigate = useNavigate();
 
   const user = useSelector((state) => state.auth.user);
 
@@ -83,6 +83,15 @@ const ProfileMenu = () => {
             >
               <Heart size={15} /> Wishlist
             </Link>
+            {user?.role?.toUpperCase() === "USER" && (
+              <Link
+                to="/become-seller"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 transition-colors hover:bg-blue-50 hover:text-blue-600"
+              >
+                <Store size={15} /> Become Seller
+              </Link>
+            )}
           </div>
 
           <div className="border-t border-gray-100 pt-1">

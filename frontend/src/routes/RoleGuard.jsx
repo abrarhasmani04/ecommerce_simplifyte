@@ -10,8 +10,9 @@ const RoleGuard = ({ children, allowedRoles = [] }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/home" replace />;
+ if (!allowedRoles.includes(user?.role?.toUpperCase())) {
+  return <Navigate to="/home" replace />;
+
   }
 
   return children;

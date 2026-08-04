@@ -6,7 +6,7 @@ import Logo from "../../../components/common/Logo";
 import Input from "../../../components/common/Input";
 import Button from "../../../components/common/Button";
 
-import api from "../../../api/axios";
+import api from "@/services/axios";
 
 const LoginOTP = () => {
   const navigate = useNavigate();

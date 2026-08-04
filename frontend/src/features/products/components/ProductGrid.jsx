@@ -12,7 +12,14 @@ const ProductGrid = ({ title, products = [] }) => {
 
   return (
     <section className="mt-14">
-      {title && <h2 className="mb-8 text-3xl font-bold">{title}</h2>}
+      {title && (
+        <h2
+          className="
+      mb-8 text-3xl font-bold"
+        >
+          {title}
+        </h2>
+      )}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />

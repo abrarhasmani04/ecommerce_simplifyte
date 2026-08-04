@@ -7,7 +7,7 @@ import Input from "../../../components/common/Input";
 import PasswordInput from "../../../components/common/PasswordInput";
 import Button from "../../../components/common/Button";
 
-import api from "../../../api/axios";
+import api from "@/services/axios";
 
 const ResetPassword = () => {
   const navigate = useNavigate();

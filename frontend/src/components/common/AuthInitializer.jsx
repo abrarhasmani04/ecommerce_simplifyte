@@ -1,25 +1,46 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUser, clearUser, setLoading } from "../../features/auth/authSlice";
-import api from "../../api/axios";
+
+import api from "@/services/axios";
+import { setUser, clearUser } from "@/features/auth/authSlice";
+import { fetchWishlist, clearWishlist } from "@/features/user/wishlist/wishlistSlice";
+import { getMyCart, clearCart } from "@/features/user/cart/cartSlice";
 
 const AuthInitializer = ({ children }) => {
   const dispatch = useDispatch();
+
   useEffect(() => {
+    let mounted = true;
+
     const checkAuth = async () => {
-      dispatch(setLoading(true));
       try {
-        const res = await api.get("/user/me");
-        if (res.data.user) {
-          dispatch(setUser(res.data.user));
+        const { data } = await api.get("/user/me");
+
+        if (!mounted) return;
+
+        if (data?.user) {
+          dispatch(setUser(data.user));
+          dispatch(fetchWishlist());
+          dispatch(getMyCart());
         } else {
           dispatch(clearUser());
+          dispatch(clearWishlist());
+          dispatch(clearCart());
         }
-      } catch {
+      } catch (error) {
+        if (!mounted) return;
+
         dispatch(clearUser());
+        dispatch(clearWishlist());
+        dispatch(clearCart());
       }
     };
+
     checkAuth();
+
+    return () => {
+      mounted = false;
+    };
   }, [dispatch]);
 
   return children;

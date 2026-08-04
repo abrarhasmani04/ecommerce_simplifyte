@@ -7,7 +7,7 @@ import Input from "../../../components/common/Input";
 import PasswordInput from "../../../components/common/PasswordInput";
 import Button from "../../../components/common/Button";
 
-import api from "../../../api/axios";
+import api from "@/services/axios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -76,10 +76,13 @@ const Register = () => {
     } catch (error) {
       console.error("Register Error:", error);
 
-      toast.error(
-        error.response?.data?.message ||
-          "Registration failed. Please try again.",
-      );
+      const data = error.response?.data;
+      const message =
+        data?.errors?.[0]?.msg ||
+        data?.message ||
+        "Registration failed. Please try again.";
+
+      toast.error(message);
     } finally {
       setLoading(false);
     }

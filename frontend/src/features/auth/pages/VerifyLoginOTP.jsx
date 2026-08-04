@@ -7,9 +7,9 @@ import Logo from "../../../components/common/Logo";
 import Input from "../../../components/common/Input";
 import Button from "../../../components/common/Button";
 
-import api from "../../../api/axios";
+import api from "@/services/axios";
 
-import { setUser } from "../authSlice";
+import { setUser } from "@/features/auth/authSlice";
 
 const VerifyLoginOTP = () => {
   const navigate = useNavigate();
