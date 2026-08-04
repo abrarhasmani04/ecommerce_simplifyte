@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import Product from "../models/productModel.js";
 import Order from "../models/orderModel.js";
 import { resetPassword } from "./authController.js";
+import sendEmail from "../services/sendEmail.js";
 
 import SellerApplication from "../models/sellerApplicationModel.js";
 
@@ -101,6 +102,31 @@ export const getRecentOrders = async (req,res)=>{
     .populate('user','name email')
     .sort({createAt: -1})
     .limit(10)
+
+    res.status(200).json({
+        success:true,
+        count:recentOrders.length,
+        recentOrders
+   })
+    }
+    catch(error)
+    {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+
+}
+
+export const getAllOrders = async (req,res)=>{
+
+    try{
+
+        const recentOrders = await Order.find()
+    .populate('user','name email')
+    .sort({createAt: -1})
+    
 
     res.status(200).json({
         success:true,
@@ -414,6 +440,9 @@ export const updateSellerApplication = async (req, res) => {
     // Send email
 try {
   if (status === "Approved") {
+    console.log("Status:", status);
+console.log("User Email:", user.email);
+console.log("User Name:", user.name);
     await sendEmail(
       user.email,
       "Seller Application Approved",
@@ -488,6 +517,27 @@ export const getSellerApplications = async (req, res) => {
       applications,
     });
   } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("name email role isVerified createdAt");
+
+    return res.status(200).json({
+      success: true,
+      message: "Users fetched successfully",
+      count: users.length,
+      users,
+    });
+
+  } catch (error) {
+    console.log("Error:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,

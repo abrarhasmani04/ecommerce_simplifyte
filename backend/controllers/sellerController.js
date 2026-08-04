@@ -2,6 +2,7 @@ import SellerApplication from "../models/sellerApplicationModel.js";
 import Product from "../models/productModel.js";
 import Order from "../models/orderModel.js";
 import sendEmail from "../services/sendEmail.js";
+import User from "../models/userModel.js";
 
 export const applySeller = async (req, res) => {
   try {
