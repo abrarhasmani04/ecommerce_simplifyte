@@ -1,7 +1,34 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import path from "path";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [react(), tailwindcss()],
+
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://192.168.0.181:5000",
+        changeOrigin: true,
+        secure: false,
+        // Disable keep-alive — fixes Vite proxy 500 bug on keep-alive responses
+        headers: { connection: "close" },
+        configure: (proxy) => {
+          proxy.on("error", (_err, _req, res) => {
+            if (!res.headersSent) {
+              res.writeHead(503, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ message: "Backend unreachable" }));
+            }
+          });
+        },
+      },
+    },
+  },
+});
