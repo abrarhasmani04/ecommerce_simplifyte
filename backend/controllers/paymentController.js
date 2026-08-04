@@ -1,6 +1,7 @@
 import Order from "../models/orderModel.js";
 import razorpay from "../utils/razorpay.js";
 import crypto from 'crypto'
+import sendEmail from '../services/sendEmail.js';
 
 
 export const createPaymentOrder = async (req, res) => {
@@ -49,6 +50,8 @@ export const createPaymentOrder = async (req, res) => {
     // 6. Save Razorpay Order ID
     order.razorpayOrderId = razorpayOrder.id;
     await order.save();
+
+    
 
     // 7. Response
     res.status(200).json({
@@ -108,6 +111,25 @@ export const verifyPayment = async (req, res) => {
     order.paidAt = new Date();
 
     await order.save();
+    try {
+  await sendEmail(
+    req.user.email,
+    "Payment Successful",
+    `
+      <h2>Payment Successful 🎉</h2>
+
+      <p>Hello ${req.user.name},</p>
+
+      <p>Your payment has been received.</p>
+
+      <p>Order ID: ${order._id}</p>
+
+      <p>Total: ₹${order.totalPrice}</p>
+    `
+  );
+} catch (error) {
+  console.log(error.message);
+}
 
     res.status(200).json({
       success: true,

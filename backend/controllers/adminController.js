@@ -411,6 +411,48 @@ export const updateSellerApplication = async (req, res) => {
     await application.save();
     await user.save();
 
+    // Send email
+try {
+  if (status === "Approved") {
+    await sendEmail(
+      user.email,
+      "Seller Application Approved",
+      `
+      <h2>Congratulations 🎉</h2>
+
+      <p>Hello ${user.name},</p>
+
+      <p>Your seller application has been approved.</p>
+
+      <p>You can now login as a Seller and start selling products.</p>
+
+      <p>Happy Selling!</p>
+      `
+    );
+  }
+
+  if (status === "Rejected") {
+    await sendEmail(
+      user.email,
+      "Seller Application Rejected",
+      `
+      <h2>Seller Application Rejected</h2>
+
+      <p>Hello ${user.name},</p>
+
+      <p>Unfortunately, your seller application has been rejected.</p>
+
+      <p><strong>Reason:</strong> ${rejectionReason}</p>
+
+      <p>You can update your details and apply again.</p>
+      `
+    );
+  }
+} catch (error) {
+  console.log("Email Error:", error.message);
+}
+
+
     return res.status(200).json({
       success: true,
       message: `Seller application ${status.toLowerCase()} successfully`,

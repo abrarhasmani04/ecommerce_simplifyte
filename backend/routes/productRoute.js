@@ -4,6 +4,8 @@ import { addProduct,getProducts,getProductById, updateProduct, deleteProduct,} f
 import authMiddleware from "../middlewares/authMiddleware.js";
 import authorizeRoles from "../middlewares/authorizeRoles.js";
 import upload from '../middlewares/MulterMiddleware.js';
+import { productValidation } from "../validations/productValidation.js";
+import validationMiddleware from "../middlewares/validationMiddleware.js";
 
 
 
@@ -11,10 +13,10 @@ import upload from '../middlewares/MulterMiddleware.js';
 const productRoute = express.Router()
 
 productRoute.get('/',getProducts)
-productRoute.post('/add',authMiddleware,authorizeRoles('seller','admin'),upload.array('images',5),addProduct)
+productRoute.post('/add',authMiddleware,authorizeRoles('seller','admin'),upload.array('images',5),productValidation,validationMiddleware,addProduct)
 
 productRoute.get('/:id',getProductById)
-productRoute.put('/:id',authMiddleware,authorizeRoles('seller','admin'),updateProduct)
+productRoute.put('/:id',authMiddleware,authorizeRoles('seller','admin'),productValidation,validationMiddleware,updateProduct)
 productRoute.delete('/:id',authMiddleware,authorizeRoles('seller','admin'),deleteProduct)
 
 
