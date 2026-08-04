@@ -16,18 +16,16 @@ const transporter = nodemailer.createTransport({
 
 const sendEmail = async (to, subject, html) => {
   try {
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    await transporter.sendMail({
+      from: `"EasyCode" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     console.log("Email sent successfully");
   } catch (error) {
-    console.log("Email Error:", error.message);
+    console.error("Email Error:", error.message);
     throw error;
   }
 };

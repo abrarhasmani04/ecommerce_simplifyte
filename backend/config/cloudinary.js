@@ -3,9 +3,6 @@ import { config } from "dotenv";
 
 config();
 
-console.log("Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
-console.log("API Key:", process.env.CLOUDINARY_API_KEY);
-console.log("Secret loaded:", !!process.env.CLOUDINARY_API_SECRET);
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

@@ -15,22 +15,38 @@ import reviewRoute from "./routes/reviewRoute.js";
 import wishlistRoute from "./routes/wishlistRoute.js";
 import adminRoute from "./routes/adminRoute.js";
 import sellerAppRoute from './routes/sellerAppRouter.js'
+import helmet from 'helmet'
+import rateLimiter from "./middlewares/rateLimiter.js";
+import morgan from "morgan";
+import compression from "compression";
+
+
 
 
 
 
 dotenv.config();
 const app = express();
+
+
 connectDB();
 
-app.use(express.json());
-app.use(cookieParser());
+app.use(helmet());
 app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
   }),
 );
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(compression())
+app.use(morgan('dev'))
+
+app.use(rateLimiter);
+
+
 app.use("/api", authRoute);
 app.use("/api",categoryRoute)
 app.use('/api/product',productRoute)
