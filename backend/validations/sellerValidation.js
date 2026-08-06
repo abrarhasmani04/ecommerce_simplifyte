@@ -25,6 +25,6 @@ export const sellerApplicationValidation = [
     .trim()
     .notEmpty()
     .withMessage("About business is required")
-    .isLength({ min: 20, max: 500 })
+    .isLength({ min: 10, max: 500 })
     .withMessage("About business must be between 20 and 500 characters"),
 ];

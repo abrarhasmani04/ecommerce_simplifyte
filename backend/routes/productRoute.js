@@ -6,6 +6,7 @@ import authorizeRoles from "../middlewares/authorizeRoles.js";
 import upload from '../middlewares/MulterMiddleware.js';
 import { productValidation } from "../validations/productValidation.js";
 import validationMiddleware from "../middlewares/validationMiddleware.js";
+import { updateProductValidation } from '../validations/updateProductValidation.js';
 
 
 
@@ -16,7 +17,7 @@ productRoute.get('/',getProducts)
 productRoute.post('/add',authMiddleware,authorizeRoles('seller','admin'),upload.array('images',5),productValidation,validationMiddleware,addProduct)
 
 productRoute.get('/:id',getProductById)
-productRoute.put('/:id',authMiddleware,authorizeRoles('seller','admin'),productValidation,validationMiddleware,updateProduct)
+productRoute.put('/:id',authMiddleware,authorizeRoles('seller','admin'),updateProductValidation,validationMiddleware,updateProduct)
 productRoute.delete('/:id',authMiddleware,authorizeRoles('seller','admin'),deleteProduct)
 
 
