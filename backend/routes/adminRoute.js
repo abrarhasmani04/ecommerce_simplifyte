@@ -1,7 +1,7 @@
 import express from 'express'
 import authMiddleware from '../middlewares/authMiddleware.js'
 import authorizeRoles from '../middlewares/authorizeRoles.js'
-import { getDashboard ,getMonthlySales, getRecentOrders,getLowStock, getTopSellingProducts,getTopCategories, getAllUsers, getAllOrders} from '../controllers/adminController.js'
+import { getDashboard ,getMonthlySales, getRecentOrders,getLowStock, getTopSellingProducts,getTopCategories, getAllUsers, getAllOrders, getAllSellers, deleteUser} from '../controllers/adminController.js'
 import {getSellerApplications, updateSellerApplication } from '../controllers/adminController.js'
 import validationMiddleware from '../middlewares/validationMiddleware.js'
 import { updateSellerApplicationValidation } from '../validations/updateSellerApplicationValidation.js'
@@ -18,6 +18,8 @@ adminRoute.get("/top-categories",authMiddleware,authorizeRoles("admin"),getTopCa
 adminRoute.put("/seller-applications/:id",authMiddleware,validationMiddleware,updateSellerApplicationValidation,authorizeRoles("admin"),updateSellerApplication);
 adminRoute.get('/all-orders',authMiddleware,authorizeRoles('admin'),getAllOrders)
 adminRoute.get('/seller-applications', authMiddleware,authorizeRoles("admin"),getSellerApplications)
+adminRoute.get('/get-sellers', authMiddleware,authorizeRoles("admin"),getAllSellers)
+adminRoute.delete('/user-delete/:id', authMiddleware,authorizeRoles("admin"),deleteUser)
 
 
 export default adminRoute

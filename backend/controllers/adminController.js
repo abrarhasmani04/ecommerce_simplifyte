@@ -100,7 +100,8 @@ export const getRecentOrders = async (req,res)=>{
 
         const recentOrders = await Order.find()
     .populate('user','name email')
-    .sort({createAt: -1})
+    .populate({ path: 'orderItems.product', select: 'name price images seller', populate: { path: 'seller', select: 'name' } })
+    .sort({createdAt: -1})
     .limit(10)
 
     res.status(200).json({
@@ -125,7 +126,8 @@ export const getAllOrders = async (req,res)=>{
 
         const recentOrders = await Order.find()
     .populate('user','name email')
-    .sort({createAt: -1})
+    .populate({ path: 'orderItems.product', select: 'name images seller', populate: { path: 'seller', select: 'name email' } })
+    .sort({createdAt: -1})
     
 
     res.status(200).json({
@@ -542,5 +544,50 @@ export const getAllUsers = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+export const getAllSellers = async (req, res) => {
+  try {
+    const sellers = await User.find({ role: "seller" })
+      .select("name email isActive isVerified createdAt")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: sellers.length,
+      sellers,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId is required." });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    if (user.role === "admin") {
+      return res.status(403).json({ success: false, message: "Cannot delete an admin account." });
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    return res.status(200).json({ success: true, message: "User deleted successfully." });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
 };

@@ -6,7 +6,7 @@ import {
   deleteAddressApi,
 } from "@/services/addressApi";
 
-// ─── Thunks ────────────────────────────────────────────────────────────────
+// ─── Thunks 
 
 export const fetchAddresses = createAsyncThunk(
   "address/fetchAll",
@@ -22,7 +22,6 @@ export const fetchAddresses = createAsyncThunk(
   }
 );
 
-// Extract the most useful error message from express-validator or plain message
 const extractError = (err, fallback) => {
   const body = err?.response?.data;
   if (!body) return fallback;
@@ -71,7 +70,7 @@ export const deleteAddress = createAsyncThunk(
   }
 );
 
-// ─── Slice ─────────────────────────────────────────────────────────────────
+// ─── Slice 
 
 const initialState = {
   addresses: [],
@@ -95,7 +94,7 @@ const addressSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-    // ── fetchAddresses ───────────────────────────────────────────────────
+    // ── fetchAddresses 
     builder
       .addCase(fetchAddresses.pending, (state) => {
         state.loading = true;
@@ -114,7 +113,7 @@ const addressSlice = createSlice({
         state.error = action.payload;
       });
 
-    // ── addAddress ───────────────────────────────────────────────────────
+    // ── addAddress 
     builder
       .addCase(addAddress.pending, (state) => {
         state.submitting = true;
@@ -131,7 +130,7 @@ const addressSlice = createSlice({
         state.error = action.payload;
       });
 
-    // ── updateAddress ────────────────────────────────────────────────────
+    // ── updateAddress 
     builder
       .addCase(updateAddress.pending, (state) => {
         state.submitting = true;
@@ -149,7 +148,7 @@ const addressSlice = createSlice({
         state.error = action.payload;
       });
 
-    // ── deleteAddress ────────────────────────────────────────────────────
+    // ── deleteAddress 
     builder
       .addCase(deleteAddress.pending, (state, action) => {
         // Optimistic removal

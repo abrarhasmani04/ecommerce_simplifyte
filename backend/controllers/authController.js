@@ -243,9 +243,29 @@ const verifyEmail = async (req,res)=>{
         userExists.otpExpiry=null
         await userExists.save()
 
+        // Auto-login: generate JWT and set cookie
+        const token = jwt.sign(
+            { id: userExists._id, role: userExists.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
         return res.status(200).json({
-            success:true,
-            message:"Email verified Successfully"
+            success: true,
+            message: "Email verified successfully. You are now logged in.",
+            user: {
+                id: userExists._id,
+                name: userExists.name,
+                email: userExists.email,
+                role: userExists.role
+            }
         })
 
 

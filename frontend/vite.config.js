@@ -18,7 +18,6 @@ export default defineConfig({
         target: "http://192.168.0.181:5000",
         changeOrigin: true,
         secure: false,
-        // Disable keep-alive — fixes Vite proxy 500 bug on keep-alive responses
         headers: { connection: "close" },
         configure: (proxy) => {
           proxy.on("error", (_err, _req, res) => {
