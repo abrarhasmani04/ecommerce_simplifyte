@@ -247,7 +247,46 @@ export const updateProduct = async (req, res) => {
       });
     }
 
-    Object.assign(product, req.body);
+    const {
+      name,
+      description,
+      price,
+      discountPrice,
+      brand,
+      category,
+      stock,
+      isFeatured,
+      existingImages,
+    } = req.body;
+
+    if (name !== undefined) product.name = name;
+    if (description !== undefined) product.description = description;
+    if (price !== undefined) product.price = price;
+    if (discountPrice !== undefined) product.discountPrice = discountPrice;
+    if (brand !== undefined) product.brand = brand;
+    if (category !== undefined) product.category = category;
+    if (stock !== undefined) product.stock = stock;
+    if (isFeatured !== undefined) product.isFeatured = isFeatured;
+
+    // Rebuild images: keep the ones the client wants to retain, then upload new files
+    let keptImages = [];
+    if (existingImages) {
+      keptImages = Array.isArray(existingImages) ? existingImages : [existingImages];
+    }
+
+    let newImageUrls = [];
+    const files = req.files;
+    if (files && files.length > 0) {
+      for (const file of files) {
+        const uploadResponse = await cloudinary.uploader.upload(
+          `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
+          { folder: "products" }
+        );
+        newImageUrls.push(uploadResponse.secure_url);
+      }
+    }
+
+    product.images = [...keptImages, ...newImageUrls];
 
     await product.save();
 
