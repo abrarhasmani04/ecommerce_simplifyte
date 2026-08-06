@@ -1,12 +1,13 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PageLoader from "../components/common/PageLoader";
 
 const GuestRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useSelector(
     (state) => state.auth
   );
 
-  if (loading) return null;
+  if (loading) return <PageLoader />;
 
   if (!isAuthenticated) {
     return children;

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, ShoppingBag, Heart, LogOut, Store } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/features/auth/authSlice";
+import { logout } from "@/redux/authSlice";
 import api from "@/services/axios";
 
 const ProfileMenu = () => {

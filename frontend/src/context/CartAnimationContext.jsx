@@ -1,13 +1,19 @@
-import { createContext, useCallback, useContext, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
-// ─── Context ─────────────────────────────────────────────────────────────────
+// ─── Context
 
 const CartAnimationContext = createContext(null);
 
 export const useCartAnimation = () => useContext(CartAnimationContext);
 
-// ─── Flying item ─────────────────────────────────────────────────────────────
+// ─── Flying item
 
 const DURATION = 700; // ms
 
@@ -48,11 +54,11 @@ const FlyingItem = ({ src, startRect, onDone }) => {
         animation: `cart-fly ${DURATION}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
       }}
     />,
-    document.body
+    document.body,
   );
 };
 
-// ─── Provider ────────────────────────────────────────────────────────────────
+// ─── Provider
 
 export const CartAnimationProvider = ({ children }) => {
   const [flights, setFlights] = useState([]); // [{ id, src, startRect }]

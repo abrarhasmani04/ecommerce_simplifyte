@@ -54,6 +54,21 @@ export const fetchSellerApplications = createAsyncThunk(
   }
 );
 
+/** Fetch recent orders (last 10) */
+export const fetchRecentOrders = createAsyncThunk(
+  "admin/fetchRecentOrders",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/admin/recent-orders");
+      return data.recentOrders ?? data.orders ?? data ?? [];
+    } catch (err) {
+      return rejectWithValue(
+        err?.response?.data?.message ?? "Failed to load recent orders"
+      );
+    }
+  }
+);
+
 /** Approve or reject a seller application */
 export const updateSellerApplication = createAsyncThunk(
   "admin/updateSellerApplication",
@@ -92,6 +107,13 @@ const initialState = {
 
   // Seller applications
   applications: {
+    items: [],
+    loading: false,
+    error: null,
+  },
+
+  // Recent orders
+  recentOrders: {
     items: [],
     loading: false,
     error: null,
@@ -169,6 +191,22 @@ const adminSlice = createSlice({
           app.status = status;
           if (rejectionReason) app.rejectionReason = rejectionReason;
         }
+      });
+
+    // ── fetchRecentOrders ────────────────────────────────────────────────
+    builder
+      .addCase(fetchRecentOrders.pending, (state) => {
+        state.recentOrders.loading = true;
+        state.recentOrders.error = null;
+      })
+      .addCase(fetchRecentOrders.fulfilled, (state, action) => {
+        state.recentOrders.items = action.payload;
+        state.recentOrders.loading = false;
+        state.recentOrders.error = null;
+      })
+      .addCase(fetchRecentOrders.rejected, (state, action) => {
+        state.recentOrders.loading = false;
+        state.recentOrders.error = action.payload ?? "Failed to load recent orders";
       });
   },
 });

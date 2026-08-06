@@ -2,12 +2,6 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/E-commerce-logo.jpg";
 import { ROUTES } from "../../constants/routes";
 
-/**
- * Logo — always navigates to /home on click.
- *
- * variant="navbar"  → compact horizontal logo for the top navbar
- * variant="auth"    → centered, taller logo for auth pages (default)
- */
 const Logo = ({ variant = "auth" }) => {
   if (variant === "navbar") {
     return (
@@ -27,7 +21,6 @@ const Logo = ({ variant = "auth" }) => {
     );
   }
 
-  /* variant === "auth" */
   return (
     <Link
       to={ROUTES.HOME}

@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import {
   removeCartItem,
   updateCartItemQuantity,
   deleteAllCart,
-} from "@/features/user/cart/cartSlice";
+} from "@/redux/cartSlice";
 import QuantitySelector from "@/features/user/products/components/QuantitySelector";
 
 const EmptyCart = () => (
@@ -27,6 +27,7 @@ const EmptyCart = () => (
 
 const CartPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { items, loading } = useSelector((state) => state.cart);
 
   const subtotal = items.reduce(
@@ -165,6 +166,7 @@ const CartPage = () => {
             <button
               className="mt-6 w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={items.length === 0}
+              onClick={() => navigate("/checkout")}
             >
               Proceed to Checkout
             </button>

@@ -5,7 +5,7 @@ import {
   updateCartQuantityApi,
   removeCartItemApi,
   deleteAllCartApi,
-} from "./cartApi";
+} from "@/services/cartApi";
 
 export const getMyCart = createAsyncThunk(
   "cart/getMyCart",
@@ -182,8 +182,9 @@ const cartSlice = createSlice({
       .addCase(addToCart.fulfilled, (state, action) => {
         const { productId, serverItem } = action.payload;
         const item = state.items.find((i) => i.productId === productId);
-        if (item && serverItem?._id) {
-          item._id = serverItem._id;
+        const realId = serverItem?.cart?._id ?? serverItem?._id;
+        if (item && realId) {
+          item._id = realId;
         }
         state.error = null;
       })

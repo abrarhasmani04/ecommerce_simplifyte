@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "@/features/user/cart/cartSlice";
+import { addToCart } from "@/redux/cartSlice";
 import Rating from "./Rating";
 
 const RelatedProducts = ({ products = [] }) => {

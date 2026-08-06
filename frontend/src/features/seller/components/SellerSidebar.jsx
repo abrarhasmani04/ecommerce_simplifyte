@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { Store, LogOut, LayoutDashboard, Package, ShoppingCart, BarChart2 } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { clearUser } from "@/features/auth/authSlice";
+import { clearUser } from "@/redux/authSlice";
 import api from "@/services/axios";
 
 const sellerMenu = [

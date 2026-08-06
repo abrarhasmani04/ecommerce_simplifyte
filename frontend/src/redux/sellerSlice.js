@@ -60,6 +60,38 @@ export const fetchSellerOrders = createAsyncThunk(
   }
 );
 
+/** Fetch seller analytics */
+export const fetchSellerAnalytics = createAsyncThunk(
+  "seller/fetchAnalytics",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/seller/analytics");
+      return data.analytics ?? data;
+    } catch (err) {
+      return rejectWithValue(
+        err?.response?.data?.message ?? "Failed to load analytics"
+      );
+    }
+  }
+);
+
+/** Update status of a seller order */
+export const updateSellerOrderStatus = createAsyncThunk(
+  "seller/updateOrderStatus",
+  async ({ orderId, orderStatus }, { rejectWithValue }) => {
+    try {
+      const { data } = await api.put(`/seller/orders/${orderId}/status`, {
+        orderStatus,
+      });
+      return data;
+    } catch (err) {
+      return rejectWithValue(
+        err?.response?.data?.message ?? "Failed to update order status"
+      );
+    }
+  }
+);
+
 // ─── Slice ─────────────────────────────────────────────────────────────────
 
 const initialState = {
@@ -87,6 +119,11 @@ const initialState = {
     loading: false,
     error: null,
   },
+
+  // Seller analytics
+  analytics: null,
+  analyticsLoading: false,
+  analyticsError: null,
 };
 
 const sellerSlice = createSlice({
@@ -131,6 +168,22 @@ const sellerSlice = createSlice({
       .addCase(fetchSellerProducts.rejected, (state, action) => {
         state.products.loading = false;
         state.products.error = action.payload ?? "Failed to load products";
+      });
+
+    // ── fetchSellerAnalytics ─────────────────────────────────────────────
+    builder
+      .addCase(fetchSellerAnalytics.pending, (state) => {
+        state.analyticsLoading = true;
+        state.analyticsError = null;
+      })
+      .addCase(fetchSellerAnalytics.fulfilled, (state, action) => {
+        state.analytics = action.payload;
+        state.analyticsLoading = false;
+        state.analyticsError = null;
+      })
+      .addCase(fetchSellerAnalytics.rejected, (state, action) => {
+        state.analyticsLoading = false;
+        state.analyticsError = action.payload ?? "Failed to load analytics";
       });
 
     // ── fetchSellerOrders ────────────────────────────────────────────────

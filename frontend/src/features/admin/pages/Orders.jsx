@@ -1,18 +1,126 @@
 import { useState, useEffect, useCallback } from "react";
-import { RefreshCw, ShoppingCart } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RefreshCw, ShoppingCart, ChevronDown } from "lucide-react";
+import { toast } from "react-toastify";
 import api from "@/services/axios";
+
+// ─── constants
+const VALID_STATUSES = [
+  "Pending",
+  "Confirmed",
+  "Processing",
+  "Shipped",
+  "Delivered",
+  "Cancelled",
+];
 
 const STATUS_STYLES = {
   pending: "bg-yellow-100 text-yellow-700",
-  processing: "bg-blue-100 text-blue-700",
+  confirmed: "bg-blue-100   text-blue-700",
+  processing: "bg-indigo-100 text-indigo-700",
   shipped: "bg-purple-100 text-purple-700",
-  delivered: "bg-green-100 text-green-700",
-  completed: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-700",
-  refunded: "bg-slate-100 text-slate-600",
+  delivered: "bg-green-100  text-green-700",
+  cancelled: "bg-red-100    text-red-700",
 };
 
+// ─── helpers
+const fmt = (val) =>
+  val != null ? `₹${Number(val).toLocaleString("en-IN")}` : "—";
+
+const fmtDate = (val) => {
+  if (!val) return "—";
+  return new Date(val).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const getSellers = (order) => {
+  const names = new Set();
+  (order.orderItems ?? []).forEach((item) => {
+    const name = item.product?.seller?.name;
+    if (name) names.add(name);
+  });
+  return [...names];
+};
+
+const isSellerOrder = (order, adminId) =>
+  (order.orderItems ?? []).length > 0 &&
+  (order.orderItems ?? []).every((item) => {
+    const sellerId = item.product?.seller?._id ?? item.product?.seller;
+    if (!sellerId) return false; // no seller populated → admin product
+    return sellerId.toString() !== adminId?.toString(); // differs from admin → seller product
+  });
+
+const StatusDropdown = ({ orderId, current, disabled, onUpdated }) => {
+  const [updating, setUpdating] = useState(false);
+
+  const handleChange = async (e) => {
+    const newStatus = e.target.value;
+    if (newStatus === current) return;
+    setUpdating(true);
+    try {
+      const { data } = await api.put(`/orders/${orderId}/status`, {
+        orderStatus: newStatus,
+      });
+      toast.success(`Status updated to ${newStatus}`);
+      onUpdated(orderId, data.order?.orderStatus ?? newStatus);
+    } catch (err) {
+      toast.error(err?.response?.data?.message ?? "Failed to update status.");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  if (disabled) {
+    const lc = (current ?? "pending").toLowerCase();
+    return (
+      <span
+        className={`inline-block rounded-full px-3 py-1 text-xs font-medium capitalize ${
+          STATUS_STYLES[lc] ?? "bg-slate-100 text-slate-600"
+        }`}
+      >
+        {current}
+      </span>
+    );
+  }
+
+  return (
+    <div className="relative inline-flex items-center">
+      <select
+        value={current}
+        onChange={handleChange}
+        disabled={updating || current === "Cancelled"}
+        className={`appearance-none rounded-full border py-1 pl-3 pr-7 text-xs font-medium capitalize focus:outline-none focus:ring-2 focus:ring-blue-400 transition disabled:opacity-60 cursor-pointer ${
+          STATUS_STYLES[(current ?? "pending").toLowerCase()] ??
+          "bg-slate-100 text-slate-600"
+        } border-transparent`}
+      >
+        {VALID_STATUSES.map((s) => (
+          <option key={s} value={s}>
+            {s}
+          </option>
+        ))}
+      </select>
+      {updating ? (
+        <RefreshCw
+          size={11}
+          className="pointer-events-none absolute right-2 animate-spin text-current opacity-70"
+        />
+      ) : (
+        <ChevronDown
+          size={11}
+          className="pointer-events-none absolute right-2 text-current opacity-70"
+        />
+      )}
+    </div>
+  );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 const Orders = () => {
+  const { user: adminUser } = useSelector((state) => state.auth);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,13 +130,11 @@ const Orders = () => {
     setError("");
     try {
       const { data } = await api.get("/admin/all-orders");
-
-      const list = data?.orders ?? data?.data ?? data;
+      const list = data?.recentOrders ?? data?.orders ?? data?.data ?? data;
       setOrders(Array.isArray(list) ? list : []);
     } catch (err) {
       const status = err?.response?.status;
       if (status === 404) {
-        // route not yet implemented on backend — show empty state, not error
         setOrders([]);
       } else {
         setError(err?.response?.data?.message ?? "Failed to load orders.");
@@ -42,18 +148,13 @@ const Orders = () => {
     fetchOrders();
   }, [fetchOrders]);
 
-  const fmt = (val) =>
-    val !== undefined && val !== null
-      ? `₹${Number(val).toLocaleString("en-IN")}`
-      : "—";
-
-  const fmtDate = (val) => {
-    if (!val) return "—";
-    return new Date(val).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+  // Patch single order status in local state after update
+  const handleStatusUpdated = (orderId, newStatus) => {
+    setOrders((prev) =>
+      prev.map((o) =>
+        (o._id ?? o.id) === orderId ? { ...o, orderStatus: newStatus } : o,
+      ),
+    );
   };
 
   return (
@@ -63,7 +164,7 @@ const Orders = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Orders</h1>
           <p className="text-slate-500 text-sm">
-            All customer orders across the platform
+            All customer orders — seller orders are view-only
           </p>
         </div>
         <button
@@ -88,7 +189,7 @@ const Orders = () => {
         {loading && orders.length === 0 ? (
           <div className="flex items-center justify-center py-20 text-slate-400">
             <RefreshCw size={20} className="mr-2 animate-spin" /> Loading
-            orders...
+            orders…
           </div>
         ) : orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-3">
@@ -102,27 +203,33 @@ const Orders = () => {
                 <tr>
                   <th className="p-4 text-left">Order ID</th>
                   <th className="p-4 text-left">Customer</th>
+                  <th className="p-4 text-left">Seller(s)</th>
                   <th className="p-4 text-left">Date</th>
-                  <th className="p-4 text-left">Items</th>
+                  <th className="p-4 text-left">Products</th>
                   <th className="p-4 text-left">Amount</th>
-                  <th className="p-4 text-left">Status</th>
+                  <th className="p-4 text-left">Order Status</th>
                   <th className="p-4 text-left">Payment</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.map((order, idx) => {
                   const id = order._id ?? order.id;
-                  const status = (order.status ?? "pending").toLowerCase();
                   const paymentStatus = (
                     order.paymentStatus ??
                     order.payment?.status ??
                     ""
                   ).toLowerCase();
+                  const sellers = getSellers(order);
+                  const sellerOwned = isSellerOrder(order, adminUser?._id);
 
                   return (
                     <tr
                       key={id ?? idx}
-                      className="border-t hover:bg-slate-50/60 transition"
+                      className={`border-t transition ${
+                        sellerOwned
+                          ? "bg-slate-50/40 hover:bg-slate-50"
+                          : "hover:bg-slate-50/60"
+                      }`}
                     >
                       {/* Order ID */}
                       <td className="p-4 font-mono text-xs text-slate-600">
@@ -144,14 +251,64 @@ const Orders = () => {
                         )}
                       </td>
 
+                      {/* Sellers */}
+                      <td className="p-4">
+                        {sellers.length > 0 ? (
+                          <div className="flex flex-col gap-0.5">
+                            {sellers.map((name, i) => (
+                              <span
+                                key={i}
+                                className="inline-block rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-medium text-violet-700 w-fit"
+                              >
+                                {name}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-400">—</span>
+                        )}
+                      </td>
+
                       {/* Date */}
                       <td className="p-4 text-slate-600 whitespace-nowrap">
                         {fmtDate(order.createdAt)}
                       </td>
 
-                      {/* Items count */}
-                      <td className="p-4 text-slate-600">
-                        {order.items?.length ?? order.orderItems?.length ?? "—"}
+                      {/* Products — thumbnail + name */}
+                      <td className="p-4">
+                        <div className="flex flex-col gap-2">
+                          {(order.orderItems ?? []).map((item, i) => {
+                            const img =
+                              item.image ?? item.product?.images?.[0] ?? null;
+                            const name = item.name ?? item.product?.name ?? "—";
+                            return (
+                              <div key={i} className="flex items-center gap-2">
+                                {img ? (
+                                  <img
+                                    src={img}
+                                    alt={name}
+                                    className="h-9 w-9 rounded-md object-cover border border-slate-100 flex-shrink-0"
+                                  />
+                                ) : (
+                                  <div className="h-9 w-9 rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                    <ShoppingCart
+                                      size={14}
+                                      className="text-slate-300"
+                                    />
+                                  </div>
+                                )}
+                                <div className="min-w-0">
+                                  <p className="truncate max-w-[140px] text-xs font-medium text-slate-700">
+                                    {name}
+                                  </p>
+                                  <p className="text-xs text-slate-400">
+                                    ×{item.quantity}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </td>
 
                       {/* Amount */}
@@ -161,16 +318,19 @@ const Orders = () => {
                         )}
                       </td>
 
-                      {/* Status badge */}
+                      {/* Status — dropdown for admin products, badge-only for seller orders */}
                       <td className="p-4">
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
-                            STATUS_STYLES[status] ??
-                            "bg-slate-100 text-slate-600"
-                          }`}
-                        >
-                          {status}
-                        </span>
+                        <StatusDropdown
+                          orderId={id}
+                          current={order.orderStatus ?? "Pending"}
+                          disabled={sellerOwned}
+                          onUpdated={handleStatusUpdated}
+                        />
+                        {sellerOwned && (
+                          <p className="mt-1 text-xs text-slate-400">
+                            Managed by seller
+                          </p>
+                        )}
                       </td>
 
                       {/* Payment status */}

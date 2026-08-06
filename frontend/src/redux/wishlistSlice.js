@@ -1,9 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "@/services/axios";
 
-// ─── Thunks ────────────────────────────────────────────────────────────────
+// ─── Thunks 
 
-/** Load all wishlist items for the logged-in user */
 export const fetchWishlist = createAsyncThunk(
   "wishlist/fetch",
   async (_, { rejectWithValue }) => {
@@ -16,11 +15,7 @@ export const fetchWishlist = createAsyncThunk(
   }
 );
 
-/**
- * Toggle wishlist item.
- * Caller must pass `isWishlisted` (current Redux state) so the thunk
- * knows what to do BEFORE the optimistic update mutates the store.
- */
+
 export const toggleWishlist = createAsyncThunk(
   "wishlist/toggle",
   async ({ productId, productData, isWishlisted }, { rejectWithValue }) => {
@@ -43,7 +38,7 @@ export const toggleWishlist = createAsyncThunk(
   }
 );
 
-// ─── Slice ─────────────────────────────────────────────────────────────────
+// ─── Slice 
 
 const initialState = {
   items: [],      // [{ productId, title, image, price }]
@@ -62,7 +57,7 @@ const wishlistSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-    // ── fetchWishlist ────────────────────────────────────────────────────
+    // ── fetchWishlist 
     builder
       .addCase(fetchWishlist.pending, (state) => {
         state.loading = true;
@@ -79,9 +74,9 @@ const wishlistSlice = createSlice({
           const p = entry.product ?? entry;
           return {
             productId: p._id ?? p.productId,
-            title:     p.name  ?? p.title ?? "",
-            image:     p.images?.[0] ?? p.image ?? "",
-            price:     p.discountPrice ?? p.price ?? 0,
+            title: p.name ?? p.title ?? "",
+            image: p.images?.[0] ?? p.image ?? "",
+            price: p.discountPrice ?? p.price ?? 0,
           };
         });
       })
@@ -90,7 +85,7 @@ const wishlistSlice = createSlice({
         state.error = action.payload;
       });
 
-    // ── toggleWishlist ───────────────────────────────────────────────────
+    // ── toggleWishlist 
     builder
       .addCase(toggleWishlist.pending, (state, action) => {
         const { productId, productData, isWishlisted } = action.meta.arg;
