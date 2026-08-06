@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Store, Building2, FileText, Phone, Info, CheckCircle, Clock, XCircle, Send } from "lucide-react";
+import { toast } from "react-toastify";
 import api from "@/services/axios";
 
 const STATUS_CONFIG = {
@@ -86,8 +87,11 @@ const BecomeSeller = () => {
       });
       setApplication(data.application ?? { status: "pending", businessName, gstNumber, phone, aboutBusiness });
       setSubmitSuccess(true);
+      toast.success("Application submitted! We'll review it shortly.");
     } catch (err) {
-      setSubmitError(err?.response?.data?.message ?? "Failed to submit application. Please try again.");
+      const msg = err?.response?.data?.message ?? "Failed to submit application. Please try again.";
+      setSubmitError(msg);
+      toast.error(msg);
     } finally {
       setSubmitLoading(false);
     }

@@ -8,8 +8,8 @@ import Input from "../../../components/common/Input";
 import Button from "../../../components/common/Button";
 
 import api from "@/services/axios";
-
-import { setUser } from "@/features/auth/authSlice";
+import { ROUTES } from "../../../constants/routes";
+import { setUser } from "@/redux/authSlice";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
@@ -64,20 +64,22 @@ const VerifyEmail = () => {
         response.data,
       );
 
-      if (response.data.user) {
-        dispatch(setUser(response.data.user));
+      const user = response.data.user;
+      if (user) {
+        dispatch(setUser(user));
       }
 
       toast.success(response.data.message || "Email verified successfully!");
 
       setTimeout(() => {
-        navigate(
-          "/login",
-
-          {
-            replace: true,
-          },
-        );
+        const role = user?.role?.toUpperCase();
+        if (role === "ADMIN") {
+          navigate(ROUTES.ADMIN_DASHBOARD, { replace: true });
+        } else if (role === "SELLER") {
+          navigate(ROUTES.SELLER_DASHBOARD, { replace: true });
+        } else {
+          navigate(ROUTES.HOME, { replace: true });
+        }
       }, 1200);
     } catch (error) {
       console.error(error);

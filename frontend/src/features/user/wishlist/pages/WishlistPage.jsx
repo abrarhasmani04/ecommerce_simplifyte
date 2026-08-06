@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Heart, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
-import { toggleWishlist } from "@/features/user/wishlist/wishlistSlice";
-import { addToCart } from "@/features/user/cart/cartSlice";
+import { toggleWishlist } from "@/redux/wishlistSlice";
+import { addToCart } from "@/redux/cartSlice";
 
 const WishlistPage = () => {
   const dispatch = useDispatch();

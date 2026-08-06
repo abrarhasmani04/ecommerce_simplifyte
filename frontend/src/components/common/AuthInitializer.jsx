@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import api from "@/services/axios";
-import { setUser, clearUser } from "@/features/auth/authSlice";
-import { fetchWishlist, clearWishlist } from "@/features/user/wishlist/wishlistSlice";
-import { getMyCart, clearCart } from "@/features/user/cart/cartSlice";
+import { setUser, clearUser } from "@/redux/authSlice";
+import { fetchWishlist, clearWishlist } from "@/redux/wishlistSlice";
+import { getMyCart, clearCart } from "@/redux/cartSlice";
 
 const AuthInitializer = ({ children }) => {
   const dispatch = useDispatch();

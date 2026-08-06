@@ -9,7 +9,7 @@ import Button from "../../../components/common/Button";
 
 import api from "@/services/axios";
 
-import { setUser } from "@/features/auth/authSlice";
+import { setUser } from "@/redux/authSlice";
 
 const VerifyLoginOTP = () => {
   const navigate = useNavigate();

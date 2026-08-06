@@ -10,7 +10,8 @@ import {
   Save,
   CheckCircle,
 } from "lucide-react";
-import { setUser } from "@/features/auth/authSlice";
+import { toast } from "react-toastify";
+import { setUser } from "@/redux/authSlice";
 import api from "@/services/axios";
 
 const ProfileForm = () => {
@@ -47,9 +48,12 @@ const ProfileForm = () => {
       const { data } = await api.put("/user/profile", { name, phone });
       dispatch(setUser(data.user ?? { ...user, name, phone }));
       setInfoSuccess(true);
+      toast.success("Profile updated successfully.");
       setTimeout(() => setInfoSuccess(false), 3000);
     } catch (err) {
-      setInfoError(err?.response?.data?.message ?? "Failed to update profile.");
+      const msg = err?.response?.data?.message ?? "Failed to update profile.";
+      setInfoError(msg);
+      toast.error(msg);
     } finally {
       setInfoLoading(false);
     }
@@ -60,11 +64,15 @@ const ProfileForm = () => {
     setPwdError("");
     setPwdSuccess(false);
     if (newPwd !== confirmPwd) {
-      setPwdError("New passwords do not match.");
+      const msg = "New passwords do not match.";
+      setPwdError(msg);
+      toast.error(msg);
       return;
     }
     if (newPwd.length < 6) {
-      setPwdError("Password must be at least 6 characters.");
+      const msg = "Password must be at least 6 characters.";
+      setPwdError(msg);
+      toast.error(msg);
       return;
     }
     setPwdLoading(true);
@@ -74,12 +82,15 @@ const ProfileForm = () => {
         newPassword: newPwd,
       });
       setPwdSuccess(true);
+      toast.success("Password changed successfully.");
       setCurrentPwd("");
       setNewPwd("");
       setConfirmPwd("");
       setTimeout(() => setPwdSuccess(false), 3000);
     } catch (err) {
-      setPwdError(err?.response?.data?.message ?? "Failed to change password.");
+      const msg = err?.response?.data?.message ?? "Failed to change password.";
+      setPwdError(msg);
+      toast.error(msg);
     } finally {
       setPwdLoading(false);
     }

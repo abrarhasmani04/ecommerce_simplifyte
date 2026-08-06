@@ -1,15 +1,54 @@
-import { useSelector } from "react-redux";
-import { ShoppingBag, Package, TrendingUp, Star } from "lucide-react";
-
-const stats = [
-  { label: "Total Orders", value: "0", icon: ShoppingBag, color: "bg-blue-100 text-blue-600" },
-  { label: "Products Listed", value: "0", icon: Package, color: "bg-purple-100 text-purple-600" },
-  { label: "Revenue", value: "₹0", icon: TrendingUp, color: "bg-green-100 text-green-600" },
-  { label: "Rating", value: "—", icon: Star, color: "bg-yellow-100 text-yellow-600" },
-];
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ShoppingBag, Package, TrendingUp, Clock, CheckCircle } from "lucide-react";
+import { fetchSellerDashboard } from "@/redux/sellerSlice";
 
 const SellerDashboard = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { dashboard, dashboardLoading, dashboardError } = useSelector(
+    (state) => state.seller
+  );
+
+  useEffect(() => {
+    dispatch(fetchSellerDashboard());
+  }, [dispatch]);
+
+  const stats = [
+    {
+      label: "Total Orders",
+      value: dashboard?.totalOrders ?? "—",
+      icon: ShoppingBag,
+      color: "bg-blue-100 text-blue-600",
+    },
+    {
+      label: "Products Listed",
+      value: dashboard?.totalProducts ?? "—",
+      icon: Package,
+      color: "bg-purple-100 text-purple-600",
+    },
+    {
+      label: "Revenue",
+      value:
+        dashboard?.totalRevenue != null
+          ? `₹${dashboard.totalRevenue.toLocaleString("en-IN")}`
+          : "—",
+      icon: TrendingUp,
+      color: "bg-green-100 text-green-600",
+    },
+    {
+      label: "Pending Orders",
+      value: dashboard?.pendingOrders ?? "—",
+      icon: Clock,
+      color: "bg-yellow-100 text-yellow-600",
+    },
+    {
+      label: "Delivered Orders",
+      value: dashboard?.deliveredOrders ?? "—",
+      icon: CheckCircle,
+      color: "bg-emerald-100 text-emerald-600",
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -23,8 +62,15 @@ const SellerDashboard = () => {
         </p>
       </div>
 
+      {/* Error */}
+      {dashboardError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          {dashboardError}
+        </div>
+      )}
+
       {/* Stats */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -36,7 +82,11 @@ const SellerDashboard = () => {
                 <div>
                   <p className="text-sm text-slate-500">{stat.label}</p>
                   <p className="mt-1 text-2xl font-bold text-slate-800">
-                    {stat.value}
+                    {dashboardLoading ? (
+                      <span className="inline-block h-7 w-16 animate-pulse rounded bg-slate-200" />
+                    ) : (
+                      stat.value
+                    )}
                   </p>
                 </div>
                 <div className={`rounded-xl p-3 ${stat.color}`}>
@@ -46,11 +96,6 @@ const SellerDashboard = () => {
             </div>
           );
         })}
-      </div>
-
-      {/* Placeholder notice */}
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
-        Your orders and product analytics will appear here once you start selling.
       </div>
     </div>
   );

@@ -5,6 +5,8 @@ import { ROUTES } from "../constants/routes";
 
 import GuestRoute from "./GuestRoute";
 import RoleGuard from "./RoleGuard";
+import ScrollToTop from "../components/common/ScrollToTop";
+import PageLoader from "../components/common/PageLoader";
 
 // ─── Layouts (all from layouts/) ───────────────────────────────────────────
 import MainLayout   from "../layouts/MainLayout";
@@ -33,11 +35,18 @@ import ResetPassword   from "../features/auth/pages/ResetPassword";
 import UserProfile  from "../features/user/pages/UserProfile";
 import CartPage     from "../features/user/cart/pages/CartPage";
 import WishlistPage from "../features/user/wishlist/pages/WishlistPage";
-import BecomeSeller from "../features/user/pages/BecomeSeller";
+import BecomeSeller    from "../features/user/pages/BecomeSeller";
+import CheckoutPage    from "../features/user/checkout/pages/CheckoutPage";
+import OrdersPage      from "../features/user/orders/OrdersPage";
 
 // ─── Seller Pages ──────────────────────────────────────────────────────────
-import SellerDashboard from "../features/seller/pages/SellerDashboard";
-import SellerProfile   from "../features/seller/pages/SellerProfile";
+import SellerDashboard    from "../features/seller/pages/SellerDashboard";
+import SellerProfile      from "../features/seller/pages/SellerProfile";
+import SellerProducts     from "../features/seller/pages/SellerProducts";
+import SellerAddProduct   from "../features/seller/pages/SellerAddProduct";
+import SellerEditProduct  from "../features/seller/pages/SellerEditProduct";
+import SellerOrders       from "../features/seller/pages/SellerOrders";
+import SellerStatistics   from "../features/seller/pages/SellerStatistics";
 
 // ─── Admin Pages ───────────────────────────────────────────────────────────
 import AdminDashboard      from "../features/admin/pages/AdminDashboard";
@@ -50,14 +59,17 @@ import Sellers             from "../features/admin/pages/Sellers";
 import SellerApplications  from "../features/admin/pages/SellerApplications";
 import Statistics          from "../features/admin/pages/Statistics";
 import Orders              from "../features/admin/pages/Orders";
+import RecentOrders        from "../features/admin/pages/RecentOrders";
 import MonthlySales        from "../features/admin/pages/MonthlySales";
 import Users               from "../features/admin/pages/Users";
+import LowStock            from "../features/admin/pages/LowStock";
+import Sales               from "../features/admin/pages/Sales";
 
 // ─── Root redirect ─────────────────────────────────────────────────────────
 const RootRedirect = () => {
   const { isAuthenticated, user, loading } = useSelector((state) => state.auth);
 
-  if (loading) return null;
+  if (loading) return <PageLoader />;
 
   if (!isAuthenticated) return <Navigate to={ROUTES.LOGIN} replace />;
 
@@ -72,6 +84,7 @@ const RootRedirect = () => {
 const AppRouter = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
 
         {/* ROOT */}
@@ -99,8 +112,9 @@ const AppRouter = () => {
         <Route element={<UserLayout />}>
           <Route path={ROUTES.USER_DASHBOARD} element={<h1 className="p-8 text-2xl font-bold">User Dashboard</h1>} />
           <Route path={ROUTES.CART}           element={<CartPage />} />
+          <Route path={ROUTES.CHECKOUT}       element={<CheckoutPage />} />
           <Route path={ROUTES.WISHLIST}       element={<WishlistPage />} />
-          <Route path={ROUTES.ORDERS}         element={<h1 className="p-8 text-2xl font-bold">My Orders</h1>} />
+          <Route path={ROUTES.ORDERS}         element={<OrdersPage />} />
           <Route path={ROUTES.PROFILE}        element={<UserProfile />} />
           <Route path={ROUTES.BECOME_SELLER}  element={<BecomeSeller />} />
         </Route>
@@ -115,12 +129,13 @@ const AppRouter = () => {
           }
         >
           <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard"  element={<SellerDashboard />} />
-          <Route path="products"   element={<h1 className="p-8 text-2xl font-bold">Seller Products</h1>} />
-          <Route path="orders"     element={<h1 className="p-8 text-2xl font-bold">Seller Orders</h1>} />
-          <Route path="statistics" element={<h1 className="p-8 text-2xl font-bold">Seller Statistics</h1>} />
-          <Route path="profile"    element={<SellerProfile />} />
-          <Route path="settings"   element={<h1 className="p-8 text-2xl font-bold">Seller Settings</h1>} />
+          <Route path="dashboard"           element={<SellerDashboard />} />
+          <Route path="products"            element={<SellerProducts />} />
+          <Route path="products/add"        element={<SellerAddProduct />} />
+          <Route path="products/:id/edit"   element={<SellerEditProduct />} />
+          <Route path="orders"              element={<SellerOrders />} />
+          <Route path="statistics"          element={<SellerStatistics />} />
+          <Route path="profile"             element={<SellerProfile />} />
         </Route>
 
         {/* ADMIN — protected + role guard */}
@@ -139,13 +154,15 @@ const AppRouter = () => {
           <Route path="products/:id/edit"  element={<EditProduct />} />
           <Route path="categories"         element={<Categories />} />
           <Route path="orders"             element={<Orders />} />
+          <Route path="recent-orders"      element={<RecentOrders />} />
           <Route path="monthly-sales"      element={<MonthlySales />} />
           <Route path="users"              element={<Users />} />
           <Route path="sellers"            element={<Sellers />} />
           <Route path="applications"       element={<SellerApplications />} />
           <Route path="statistics"         element={<Statistics />} />
           <Route path="profile"            element={<AdminProfile />} />
-          <Route path="settings"           element={<h1 className="p-8 text-2xl font-bold">Admin Settings</h1>} />
+          <Route path="low-stock"          element={<LowStock />} />
+          <Route path="sales"              element={<Sales />} />
         </Route>
 
         {/* 404 */}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { CheckCircle, XCircle, Clock, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
+import { toast } from "react-toastify";
 import api from "@/services/axios";
 
 const STATUS_BADGE = {
@@ -46,8 +47,11 @@ const SellerApplications = () => {
       setApplications((prev) =>
         prev.map((a) => (a._id === id || a.id === id ? { ...a, status: "approved" } : a))
       );
+      toast.success("Seller application approved.");
     } catch (err) {
-      setRow(id, { actionError: err?.response?.data?.message ?? "Action failed." });
+      const msg = err?.response?.data?.message ?? "Failed to approve application.";
+      setRow(id, { actionError: msg });
+      toast.error(msg);
     } finally {
       setRow(id, { loading: false });
     }
@@ -56,7 +60,9 @@ const SellerApplications = () => {
   const handleReject = async (id) => {
     const reason = rowState[id]?.rejectionReason ?? "";
     if (!reason.trim()) {
-      setRow(id, { actionError: "Please enter a rejection reason." });
+      const msg = "Please enter a rejection reason.";
+      setRow(id, { actionError: msg });
+      toast.error(msg);
       return;
     }
     setRow(id, { loading: true, actionError: "" });
@@ -73,8 +79,11 @@ const SellerApplications = () => {
         )
       );
       setRow(id, { rejectOpen: false, rejectionReason: "" });
+      toast.success("Seller application rejected.");
     } catch (err) {
-      setRow(id, { actionError: err?.response?.data?.message ?? "Action failed." });
+      const msg = err?.response?.data?.message ?? "Failed to reject application.";
+      setRow(id, { actionError: msg });
+      toast.error(msg);
     } finally {
       setRow(id, { loading: false });
     }
