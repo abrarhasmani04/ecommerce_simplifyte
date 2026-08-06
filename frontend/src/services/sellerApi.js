@@ -21,5 +21,3 @@ export const applySellerApi = (formData) =>
 /** Get current seller application status */
 export const getSellerApplicationStatusApi = () =>
   api.get("/seller/application-status");
-
-export default api;

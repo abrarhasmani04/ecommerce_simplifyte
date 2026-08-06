@@ -9,7 +9,7 @@ const SearchBar = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/products?search=${encodeURIComponent(query.trim())}`);
+      navigate(`/products?keyword=${encodeURIComponent(query.trim())}`);
     }
   };
 

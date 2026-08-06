@@ -2,7 +2,7 @@ import { Bell, Menu, Search, User, Settings, LogOut } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "@/features/auth/authSlice";
+import { logout } from "@/redux/authSlice";
 import api from "@/services/axios";
 
 const AdminNavbar = ({ onToggleSidebar }) => {

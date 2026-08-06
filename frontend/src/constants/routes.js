@@ -16,18 +16,20 @@ export const ROUTES = {
   // ─── User (protected) ──────────────────────────────────────────────────
   USER_DASHBOARD: "/dashboard",
   CART:           "/cart",
+  CHECKOUT:       "/checkout",
   WISHLIST:       "/wishlist",
   ORDERS:         "/orders",
   PROFILE:        "/profile",
   BECOME_SELLER:  "/become-seller",
 
   // ─── Seller (protected + role: SELLER) ─────────────────────────────────
-  SELLER_DASHBOARD:   "/seller/dashboard",
-  SELLER_PRODUCTS:    "/seller/products",
-  SELLER_ORDERS:      "/seller/orders",
-  SELLER_STATISTICS:  "/seller/statistics",
-  SELLER_PROFILE:     "/seller/profile",
-  SELLER_SETTINGS:    "/seller/settings",
+  SELLER_DASHBOARD:        "/seller/dashboard",
+  SELLER_PRODUCTS:         "/seller/products",
+  SELLER_PRODUCT_ADD:      "/seller/products/add",
+  SELLER_PRODUCT_EDIT:     "/seller/products/:id/edit",
+  SELLER_ORDERS:           "/seller/orders",
+  SELLER_STATISTICS:       "/seller/statistics",
+  SELLER_PROFILE:          "/seller/profile",
 
   // ─── Admin (protected + role: ADMIN) ───────────────────────────────────
   ADMIN_DASHBOARD:      "/admin/dashboard",
@@ -42,5 +44,6 @@ export const ROUTES = {
   ADMIN_APPLICATIONS:   "/admin/applications",
   ADMIN_STATISTICS:     "/admin/statistics",
   ADMIN_PROFILE:        "/admin/profile",
-  ADMIN_SETTINGS:       "/admin/settings",
+  ADMIN_LOW_STOCK:      "/admin/low-stock",
+  ADMIN_SALES:          "/admin/sales",
 };

@@ -109,8 +109,6 @@ const ProductDetails = () => {
 
   if (!product) return null;
 
-  const reviews = product.reviews ?? [];
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* ── Breadcrumb ── */}
@@ -176,7 +174,7 @@ const ProductDetails = () => {
       )}
 
       {/* ── Reviews ── */}
-      <ReviewSection reviews={reviews} rating={product.rating} />
+      <ReviewSection productId={id} />
 
       {/* ── Related Products ── */}
       <RelatedProducts products={related} />

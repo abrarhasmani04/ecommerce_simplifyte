@@ -2,8 +2,9 @@ import { useRef } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "@/features/user/cart/cartSlice";
-import { toggleWishlist } from "@/features/user/wishlist/wishlistSlice";
+import { toast } from "react-toastify";
+import { addToCart } from "@/redux/cartSlice";
+import { toggleWishlist } from "@/redux/wishlistSlice";
 import { useCartAnimation } from "@/context/CartAnimationContext";
 import Rating from "./Rating";
 
@@ -27,6 +28,7 @@ const ProductCard = ({ product }) => {
         quantity: 1,
       })
     );
+    toast.success(`"${product.title}" added to cart.`);
   };
 
   const handleWishlistToggle = () => {
@@ -41,6 +43,7 @@ const ProductCard = ({ product }) => {
         },
       })
     );
+    toast.success(isWishlisted ? "Removed from wishlist." : "Added to wishlist.");
   };
 
   return (
