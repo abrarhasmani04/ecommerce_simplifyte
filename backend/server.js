@@ -25,6 +25,7 @@ import compression from "compression";
 
 
 
+
 dotenv.config();
 const app = express();
 
@@ -38,6 +39,8 @@ app.use(
     credentials: true,
   }),
 );
+
+
 
 app.use(express.json());
 app.use(cookieParser());
