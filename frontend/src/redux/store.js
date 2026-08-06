@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import authReducer     from "../features/auth/authSlice";
-import cartReducer     from "../features/user/cart/cartSlice";
-import wishlistReducer from "../features/user/wishlist/wishlistSlice";
-import productReducer  from "../features/user/products/productSlice";
-import sellerReducer   from "../features/seller/sellerSlice";
-import adminReducer    from "../features/admin/adminSlice";
+import authReducer     from "./authSlice";
+import cartReducer     from "./cartSlice";
+import wishlistReducer from "./wishlistSlice";
+import productReducer  from "./productSlice";
+import sellerReducer   from "./sellerSlice";
+import adminReducer    from "./adminSlice";
+import addressReducer  from "./addressSlice";
+import toastMiddleware from "./toastMiddleware";
 
 export const store = configureStore({
   reducer: {
@@ -15,5 +17,8 @@ export const store = configureStore({
     products: productReducer,
     seller:   sellerReducer,
     admin:    adminReducer,
+    address:  addressReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(toastMiddleware),
 });

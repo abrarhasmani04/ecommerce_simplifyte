@@ -12,7 +12,7 @@ import Divider from "../../../components/common/Divider";
 
 import api from "@/services/axios";
 import { ROUTES } from "../../../constants/routes";
-import { setUser } from "@/features/auth/authSlice";
+import { setUser } from "@/redux/authSlice";
 
 const Login = () => {
   const navigate = useNavigate("/home");

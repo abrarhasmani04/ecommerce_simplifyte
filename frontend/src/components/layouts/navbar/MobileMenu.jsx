@@ -1,8 +1,9 @@
 import { useState } from "react";
+import useScrollLock from "@/hooks/useScrollLock";
 import { Menu, X, Home, ShoppingCart, Heart, User, Package, LogOut } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/features/auth/authSlice";
+import { logout } from "@/redux/authSlice";
 
 const NAV_LINKS = [
   { to: "/home",     icon: Home,         label: "Home" },
@@ -14,6 +15,7 @@ const NAV_LINKS = [
 
 const MobileMenu = () => {
   const [open, setOpen] = useState(false);
+  useScrollLock(open);
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();

@@ -3,30 +3,34 @@ import {
   Package,
   Users,
   ShoppingCart,
-  Settings,
+  AlertTriangle,
   Tags,
   UserCheck,
   BarChart3,
   TrendingUp,
   Store,
   LogOut,
+  ShoppingBag,
+  Clock,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logout } from "@/features/auth/authSlice";
+import { logout } from "@/redux/authSlice";
 import api from "@/services/axios";
 
 const menuItems = [
-  { name: "Dashboard",           path: "/admin/dashboard",     icon: LayoutDashboard },
-  { name: "Products",            path: "/admin/products",      icon: Package },
-  { name: "Categories",          path: "/admin/categories",    icon: Tags },
-  { name: "Orders",              path: "/admin/orders",        icon: ShoppingCart },
-  { name: "Monthly Sales",       path: "/admin/monthly-sales", icon: TrendingUp },
+  { name: "Dashboard",           path: "/admin/dashboard",      icon: LayoutDashboard },
+  { name: "Products",            path: "/admin/products",       icon: Package },
+  { name: "Categories",          path: "/admin/categories",     icon: Tags },
+  { name: "Orders",              path: "/admin/orders",         icon: ShoppingCart },
+  { name: "Recent Orders",       path: "/admin/recent-orders",  icon: Clock },
+  { name: "Monthly Sales",       path: "/admin/monthly-sales",  icon: TrendingUp },
   { name: "Users",               path: "/admin/users",         icon: Users },
   { name: "Sellers",             path: "/admin/sellers",       icon: Store },
   { name: "Seller Applications", path: "/admin/applications",  icon: UserCheck },
   { name: "Statistics",          path: "/admin/statistics",    icon: BarChart3 },
-  { name: "Settings",            path: "/admin/settings",      icon: Settings },
+  { name: "Low Stock",           path: "/admin/low-stock",     icon: AlertTriangle },
+  { name: "Sales",               path: "/admin/sales",         icon: ShoppingBag },
 ];
 
 const AdminSidebar = ({ isOpen }) => {

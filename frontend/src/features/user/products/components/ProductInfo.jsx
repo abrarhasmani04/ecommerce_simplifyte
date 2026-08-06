@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import { ShoppingCart, Heart, Share2, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "@/features/user/cart/cartSlice";
-import { toggleWishlist } from "@/features/user/wishlist/wishlistSlice";
+import { toast } from "react-toastify";
+import { addToCart } from "@/redux/cartSlice";
+import { toggleWishlist } from "@/redux/wishlistSlice";
 import { useCartAnimation } from "@/context/CartAnimationContext";
 import Rating from "./Rating";
 import QuantitySelector from "./QuantitySelector";
@@ -33,6 +34,7 @@ const ProductInfo = ({ product }) => {
         quantity: qty,
       })
     );
+    toast.success(`"${product.name}" added to cart.`);
   };
 
   const handleWishlistToggle = () => {
@@ -47,10 +49,12 @@ const ProductInfo = ({ product }) => {
         },
       })
     );
+    toast.success(isWishlisted ? "Removed from wishlist." : "Added to wishlist.");
   };
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
+    toast.success("Link copied to clipboard.");
   };
 
   return (

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, Bell, Search, User, Settings, LogOut } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearUser } from "@/features/auth/authSlice";
+import { clearUser } from "@/redux/authSlice";
 import api from "@/services/axios";
 
 const SellerNavbar = ({ onToggleSidebar }) => {
