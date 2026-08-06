@@ -100,8 +100,17 @@ export const getRecentOrders = async (req,res)=>{
 
         const recentOrders = await Order.find()
     .populate('user','name email')
+   .populate({
+        path: "orderItems.product",
+        select:"name images price seller",
+        populate: {
+          path: "seller",
+          select: "name email",
+        },
+      })
+    
     .sort({createAt: -1})
-    .limit(10)
+    .limit(7)
 
     res.status(200).json({
         success:true,
@@ -122,11 +131,17 @@ export const getRecentOrders = async (req,res)=>{
 export const getAllOrders = async (req,res)=>{
 
     try{
-
-        const recentOrders = await Order.find()
-    .populate('user','name email')
-    .sort({createAt: -1})
-    
+const recentOrders = await Order.find()
+      .populate("user", "name email")
+      .populate({
+        path: "orderItems.product",
+        select:"name images price seller",
+        populate: {
+          path: "seller",
+          select: "name email",
+        },
+      })
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
         success:true,
@@ -143,6 +158,28 @@ export const getAllOrders = async (req,res)=>{
     }
 
 }
+
+
+export const getAllSellers = async (req, res) => {
+  try {
+    const sellers = await User.find({ role: "seller" })
+      .select("-password")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Sellers fetched successfully",
+      count: sellers.length,
+      sellers,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 
 export const getLowStock = async (req,res)=>{
@@ -228,6 +265,46 @@ export const getMonthlySales = async (req, res) => {
       message: error.message,
     });
 
+  }
+};
+
+
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find user
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Prevent deleting admin
+    if (user.role === "admin") {
+      return res.status(400).json({
+        success: false,
+        message: "Admin account cannot be deleted",
+      });
+    }
+
+    // Delete user
+    await User.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
