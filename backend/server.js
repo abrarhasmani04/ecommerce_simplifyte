@@ -19,7 +19,10 @@ import helmet from 'helmet'
 import rateLimiter from "./middlewares/rateLimiter.js";
 import morgan from "morgan";
 import compression from "compression";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 
@@ -67,7 +70,14 @@ app.get("/", (req, res) => {
 });
 
 
+if (process.env.NODE_ENV === "production") {
+    const frontendDist = path.join(__dirname, "../Frontend/dist");
+    app.use(express.static(frontendDist));
 
+    app.get(/^\/(?!api).*/, (_req, res) => {
+      res.sendFile(path.join(frontendDist, "index.html"));
+    });
+}
 
 
 const PORT = process.env.PORT || 3000;
