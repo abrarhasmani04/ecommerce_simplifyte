@@ -94,73 +94,91 @@ export const getDashboard = async (req, res) => {
 };
 
 
-export const getRecentOrders = async (req,res)=>{
+export const getRecentOrders = async (req, res) => {
 
-    try{
+  try {
 
-        const recentOrders = await Order.find()
-    .populate('user','name email')
-    .populate({ path: 'orderItems.product', select: 'name price images seller', populate: { path: 'seller', select: 'name' } })
-    .sort({createdAt: -1})
-    .limit(10)
-
-    res.status(200).json({
-        success:true,
-        count:recentOrders.length,
-        recentOrders
-   })
-    }
-    catch(error)
-    {
-        res.status(500).json({
-            success:false,
-            message:error.message
-        })
-    }
-
-}
-
-export const getAllOrders = async (req,res)=>{
-
-    try{
-
-        const recentOrders = await Order.find()
-    .populate('user','name email')
-    .populate({ path: 'orderItems.product', select: 'name images seller', populate: { path: 'seller', select: 'name email' } })
-    .sort({createdAt: -1})
-    
+    const recentOrders = await Order.find()
+      .populate('user', 'name email')
+      .sort({ createAt: -1 })
+      .limit(10)
 
     res.status(200).json({
-        success:true,
-        count:recentOrders.length,
-        recentOrders
-   })
-    }
-    catch(error)
-    {
-        res.status(500).json({
-            success:false,
-            message:error.message
-        })
-    }
-
-}
-
-
-export const getLowStock = async (req,res)=>{
-    const lowStockProducts = await Product.find({
-        stock:{$lt:10},
-        isActive:true
+      success: true,
+      count: recentOrders.length,
+      recentOrders
     })
-    .populate('category','name ')
-    .select('name brand stock price images category')
-    .sort({stock:1})
+  }
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+
+}
+
+export const getAllOrders = async (req, res) => {
+
+  try {
+
+    const recentOrders = await Order.find()
+      .populate('user', 'name email')
+      .sort({ createAt: -1 })
+
+
+    res.status(200).json({
+      success: true,
+      count: recentOrders.length,
+      recentOrders
+    })
+  }
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+
+}
+
+
+export const getAllSellers = async (req, res) => {
+  try {
+    const sellers = await User.find({ role: "seller" })
+      .select("-password")
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
-        sucess:true,
-        count:lowStockProducts.length,
-        products:lowStockProducts
-    })
+      success: true,
+      message: "Sellers fetched successfully",
+      count: sellers.length,
+      sellers,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+export const getLowStock = async (req, res) => {
+  const lowStockProducts = await Product.find({
+    stock: { $lt: 10 },
+    isActive: true
+  })
+    .populate('category', 'name ')
+    .select('name brand stock price images category')
+    .sort({ stock: 1 })
+
+  return res.status(200).json({
+    sucess: true,
+    count: lowStockProducts.length,
+    products: lowStockProducts
+  })
 
 }
 
@@ -230,6 +248,46 @@ export const getMonthlySales = async (req, res) => {
       message: error.message,
     });
 
+  }
+};
+
+
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find user
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Prevent deleting admin
+    if (user.role === "admin") {
+      return res.status(400).json({
+        success: false,
+        message: "Admin account cannot be deleted",
+      });
+    }
+
+    // Delete user
+    await User.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -440,15 +498,15 @@ export const updateSellerApplication = async (req, res) => {
     await user.save();
 
     // Send email
-try {
-  if (status === "Approved") {
-    console.log("Status:", status);
-console.log("User Email:", user.email);
-console.log("User Name:", user.name);
-    await sendEmail(
-      user.email,
-      "Seller Application Approved",
-      `
+    try {
+      if (status === "Approved") {
+        console.log("Status:", status);
+        console.log("User Email:", user.email);
+        console.log("User Name:", user.name);
+        await sendEmail(
+          user.email,
+          "Seller Application Approved",
+          `
       <h2>Congratulations 🎉</h2>
 
       <p>Hello ${user.name},</p>
@@ -459,14 +517,14 @@ console.log("User Name:", user.name);
 
       <p>Happy Selling!</p>
       `
-    );
-  }
+        );
+      }
 
-  if (status === "Rejected") {
-    await sendEmail(
-      user.email,
-      "Seller Application Rejected",
-      `
+      if (status === "Rejected") {
+        await sendEmail(
+          user.email,
+          "Seller Application Rejected",
+          `
       <h2>Seller Application Rejected</h2>
 
       <p>Hello ${user.name},</p>
@@ -477,11 +535,11 @@ console.log("User Name:", user.name);
 
       <p>You can update your details and apply again.</p>
       `
-    );
-  }
-} catch (error) {
-  console.log("Email Error:", error.message);
-}
+        );
+      }
+    } catch (error) {
+      console.log("Email Error:", error.message);
+    }
 
 
     return res.status(200).json({
@@ -547,47 +605,3 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-export const getAllSellers = async (req, res) => {
-  try {
-    const sellers = await User.find({ role: "seller" })
-      .select("name email isActive isVerified createdAt")
-      .sort({ createdAt: -1 });
-
-    return res.status(200).json({
-      success: true,
-      count: sellers.length,
-      sellers,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const deleteUser = async (req, res) => {
-  try {
-    const userId = req.params.id;
-
-    if (!userId) {
-      return res.status(400).json({ success: false, message: "userId is required." });
-    }
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found." });
-    }
-
-    if (user.role === "admin") {
-      return res.status(403).json({ success: false, message: "Cannot delete an admin account." });
-    }
-
-    await User.findByIdAndDelete(userId);
-
-    return res.status(200).json({ success: true, message: "User deleted successfully." });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
-  }
-};
