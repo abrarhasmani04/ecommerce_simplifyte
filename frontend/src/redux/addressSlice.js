@@ -25,7 +25,6 @@ export const fetchAddresses = createAsyncThunk(
 const extractError = (err, fallback) => {
   const body = err?.response?.data;
   if (!body) return fallback;
-  // express-validator shape: { errors: [{ msg, path }] }
   if (Array.isArray(body.errors) && body.errors.length > 0) {
     return body.errors[0].msg ?? fallback;
   }

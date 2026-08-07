@@ -11,172 +11,71 @@ import api from "@/services/axios";
 
 const Register = () => {
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
+  const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
 
-  // Input Change
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Register Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (
-      !formData.name.trim() ||
-      !formData.email.trim() ||
-      !formData.password ||
-      !formData.confirmPassword
-    ) {
-      toast.warning("Please fill all fields.");
-
-      return;
+    if (!formData.name.trim() || !formData.email.trim() || !formData.password || !formData.confirmPassword) {
+      toast.warning("Please fill all fields."); return;
     }
-
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match.");
-
-      return;
+      toast.error("Passwords do not match."); return;
     }
-
     try {
       setLoading(true);
-
-      const response = await api.post(
-        "/user/register",
-
-        {
-          name: formData.name,
-
-          email: formData.email,
-
-          password: formData.password,
-        },
-      );
-
+      const response = await api.post("/user/register", {
+        name: formData.name, email: formData.email, password: formData.password,
+      });
       console.log("Register Response:", response.data);
-
       toast.success("Registration successful! OTP sent to your email.");
-
       navigate("/verify-email", { state: { email: formData.email } });
     } catch (error) {
       console.error("Register Error:", error);
-
       const data = error.response?.data;
-      const message =
-        data?.errors?.[0]?.msg ||
-        data?.message ||
-        "Registration failed. Please try again.";
-
-      toast.error(message);
+      toast.error(data?.errors?.[0]?.msg || data?.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <Logo />
+    <div>
+      <div className="al-mobile-logo"><Logo /></div>
 
-      <h2 className="text-3xl font-bold text-center text-gray-800">
-        Create Account
-      </h2>
+      <div style={{ marginBottom: "24px" }}>
+        <h2 style={{
+          margin: "0 0 5px", fontSize: "1.55rem", fontWeight: 800,
+          color: "#0f172a", letterSpacing: "-0.02em",
+        }}>
+          Create your account
+        </h2>
+        <p style={{ margin: 0, color: "#64748b", fontSize: "0.88rem" }}>
+          Join TrendWave — it's free
+        </p>
+      </div>
 
-      <p className="text-center text-gray-500 mt-2 mb-8">
-        Join Simplifyte today
-      </p>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Input label="Full Name" name="name" type="text" placeholder="Your full name" value={formData.name} onChange={handleChange} />
+        <Input label="Email address" name="email" type="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} />
+        <PasswordInput label="Password" name="password" placeholder="Create a password" value={formData.password} onChange={handleChange} />
+        <PasswordInput label="Confirm Password" name="confirmPassword" placeholder="Repeat your password" value={formData.confirmPassword} onChange={handleChange} />
 
-      <form
-        onSubmit={handleSubmit}
-
-        className="space-y-5"
-      >
-        <Input
-          label="Full Name"
-
-          name="name"
-
-          type="text"
-
-          placeholder="Enter your full name"
-
-          value={formData.name}
-
-          onChange={handleChange}
-        />
-
-        <Input
-          label="Email"
-
-          name="email"
-
-          type="email"
-
-          placeholder="Enter your email"
-
-          value={formData.email}
-
-          onChange={handleChange}
-        />
-
-        <PasswordInput
-          label="Password"
-
-          name="password"
-
-          placeholder="Enter your password"
-
-          value={formData.password}
-
-          onChange={handleChange}
-        />
-
-        <PasswordInput
-          label="Confirm Password"
-
-          name="confirmPassword"
-
-          placeholder="Confirm your password"
-
-          value={formData.confirmPassword}
-
-          onChange={handleChange}
-        />
-
-        <Button
-          type="submit"
-
-          disabled={loading}
-        >
-          {loading ? "Creating Account..." : "Create Account"}
+        <Button type="submit" disabled={loading}>
+          {loading ? "Creating account…" : "Create Account"}
         </Button>
 
-        <p className="text-center text-sm text-gray-600">
-          Already have an account?
-          <Link
-            to="/login"
-
-            className="ml-1 font-semibold text-blue-600 hover:underline"
-          >
-            Login
-          </Link>
+        <p style={{ margin: "4px 0 0", textAlign: "center", fontSize: "0.84rem", color: "#64748b" }}>
+          Already have an account?{" "}
+          <Link to="/login" style={{ color: "#2563eb", fontWeight: 600, textDecoration: "none" }}>Sign in</Link>
         </p>
       </form>
-    </>
+    </div>
   );
 };
 

@@ -16,7 +16,6 @@ import { setUser } from "@/redux/authSlice";
 
 const Login = () => {
   const navigate = useNavigate("/home");
-
   const dispatch = useDispatch();
 
   const {
@@ -31,160 +30,102 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
+      const response = await api.post("/user/login", {
+        email: data.email,
+        password: data.password,
+      });
 
-      const response = await api.post(
-        "/user/login",
-
-        {
-          email: data.email,
-
-          password: data.password,
-        },
-      );
-
-      // Store user in Redux
-      if (response.data.user) {
-        dispatch(setUser(response.data.user));
-      }
-
+      if (response.data.user) dispatch(setUser(response.data.user));
       toast.success("Login Successful");
-
       reset();
 
       const role = response.data.user?.role?.toUpperCase();
-
       setTimeout(() => {
-        if (role === "ADMIN") {
-          navigate(ROUTES.ADMIN_DASHBOARD, { replace: true });
-        } else if (role === "SELLER") {
-          navigate(ROUTES.SELLER_DASHBOARD, { replace: true });
-        } else {
-          navigate(ROUTES.HOME, { replace: true });
-        }
+        if (role === "ADMIN") navigate(ROUTES.ADMIN_DASHBOARD, { replace: true });
+        else if (role === "SELLER") navigate(ROUTES.SELLER_DASHBOARD, { replace: true });
+        else navigate(ROUTES.HOME, { replace: true });
       }, 1000);
     } catch (error) {
       console.error(error);
-
-      toast.error(
-        error.response?.data?.message || "Invalid email or password.",
-      );
+      toast.error(error.response?.data?.message || "Invalid email or password.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <Logo />
+    <div>
+      <div style={{ display: "block" }} className="al-mobile-logo">
+        <Logo />
+      </div>
 
-      <h2 className="text-3xl font-bold text-center text-gray-800">
-        Welcome Back
-      </h2>
+      <div style={{ marginBottom: "28px" }}>
+        <h2 style={{
+          margin: "0 0 5px", fontSize: "1.55rem", fontWeight: 800,
+          color: "#0f172a", letterSpacing: "-0.02em",
+        }}>
+          Welcome back 👋
+        </h2>
+        <p style={{ margin: 0, color: "#64748b", fontSize: "0.88rem" }}>
+          Sign in to your account to continue
+        </p>
+      </div>
 
-      <p className="mt-2 mb-8 text-center text-gray-500">
-        Login to continue shopping
-      </p>
-
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-
-        className="space-y-5"
-      >
-        <div>
-          <Input
-            label="Email"
-
-            type="email"
-
-            placeholder="Enter your email"
-
-            {...register(
-              "email",
-
-              {
-                required: "Email is required",
-              },
-            )}
-          />
-
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Input
+          label="Email address"
+          type="email"
+          placeholder="you@example.com"
+          error={errors.email?.message}
+          {...register("email", { required: "Email is required" })}
+        />
 
         <div>
           <PasswordInput
             label="Password"
-
             placeholder="Enter your password"
-
-            {...register(
-              "password",
-
-              {
-                required: "Password is required",
-              },
-            )}
+            {...register("password", { required: "Password is required" })}
           />
-
           {errors.password && (
-            <p className="mt-1 text-sm text-red-500">
+            <p style={{ margin: "4px 0 0", fontSize: "0.74rem", color: "#ef4444" }}>
               {errors.password.message}
             </p>
           )}
         </div>
 
-        <div className="flex justify-between items-center">
-          <label className="flex items-center gap-2 text-sm text-gray-600">
-            <input
-              type="checkbox"
-
-              className="accent-blue-600"
-            />
-            Remember me
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "7px", cursor: "pointer" }}>
+            <input type="checkbox" style={{ accentColor: "#2563eb", width: "14px", height: "14px" }} />
+            <span style={{ fontSize: "0.82rem", color: "#64748b" }}>Remember me</span>
           </label>
-
           <Link
             to={ROUTES.FORGOT_PASSWORD}
-
-            className="text-sm text-blue-600 hover:underline"
+            style={{ fontSize: "0.82rem", color: "#2563eb", textDecoration: "none", fontWeight: 500 }}
           >
-            Forgot Password?
+            Forgot password?
           </Link>
         </div>
 
-        <Button
-          type="submit"
-
-          disabled={loading}
-        >
-          {loading ? "Logging in..." : "Login"}
+        <Button type="submit" disabled={loading}>
+          {loading ? "Signing in…" : "Sign In"}
         </Button>
 
         <Divider />
 
-        <Link to={ROUTES.LOGIN_OTP}>
-          <Button
-            type="button"
-
-            variant="secondary"
-          >
-            Login with OTP
+        <Link to={ROUTES.LOGIN_OTP} style={{ textDecoration: "none" }}>
+          <Button type="button" variant="secondary">
+            Sign in with OTP
           </Button>
         </Link>
 
-        <p className="text-center text-sm text-gray-600">
-          Don't have an account?
-          <Link
-            to={ROUTES.REGISTER}
-
-            className="ml-1 font-semibold text-blue-600 hover:underline"
-          >
-            Register
+        <p style={{ margin: "4px 0 0", textAlign: "center", fontSize: "0.84rem", color: "#64748b" }}>
+          Don't have an account?{" "}
+          <Link to={ROUTES.REGISTER} style={{ color: "#2563eb", fontWeight: 600, textDecoration: "none" }}>
+            Create one
           </Link>
         </p>
       </form>
-    </>
+    </div>
   );
 };
 
