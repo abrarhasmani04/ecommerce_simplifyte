@@ -16,9 +16,13 @@ import wishlistRoute from "./routes/wishlistRoute.js";
 import adminRoute from "./routes/adminRoute.js";
 import sellerAppRoute from './routes/sellerAppRouter.js'
 import helmet from 'helmet'
-import rateLimiter from "./middlewares/rateLimiter.js";
+// import rateLimiter from "./middlewares/rateLimiter.js";
 import morgan from "morgan";
 import compression from "compression";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 
@@ -39,12 +43,14 @@ app.use(
   }),
 );
 
+
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(compression())
 app.use(morgan('dev'))
 
-app.use(rateLimiter);
+//  app.use(rateLimiter);
 
 
 app.use("/api", authRoute);
@@ -64,7 +70,14 @@ app.get("/", (req, res) => {
 });
 
 
+if (process.env.NODE_ENV === "production") {
+    const frontendDist = path.join(__dirname, "../Frontend/dist");
+    app.use(express.static(frontendDist));
 
+    app.get(/^\/(?!api).*/, (_req, res) => {
+      res.sendFile(path.join(frontendDist, "index.html"));
+    });
+}
 
 
 const PORT = process.env.PORT || 3000;

@@ -17,8 +17,7 @@ export const addProduct = async (req, res) => {
 
     const files = req.files;
 
-    console.log("files", files);
-
+    // Required fields validation
     if (!name || !description || !price || !category || stock === undefined) {
       return res.status(400).json({
         success: false,
@@ -26,6 +25,33 @@ export const addProduct = async (req, res) => {
       });
     }
 
+    // Image validation
+    if (!files || files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one product image is required",
+      });
+    }
+
+    // Maximum image validation
+    if (files.length > 5) {
+      return res.status(400).json({
+        success: false,
+        message: "You can upload a maximum of 5 images",
+      });
+    }
+
+    // Image type validation
+    for (const file of files) {
+      if (!file.mimetype.startsWith("image/")) {
+        return res.status(400).json({
+          success: false,
+          message: "Only image files are allowed",
+        });
+      }
+    }
+
+    // Check category exists
     const categoryExists = await Category.findById(category);
 
     if (!categoryExists) {
@@ -35,21 +61,21 @@ export const addProduct = async (req, res) => {
       });
     }
 
-    let imageUrls = [];
+    // Upload images to Cloudinary
+    const imageUrls = [];
 
-    if (files && files.length > 0) {
-      for (const file of files) {
-        const uploadResponse = await cloudinary.uploader.upload(
-          `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
-          {
-            folder: "products",
-          },
-        );
+    for (const file of files) {
+      const uploadResponse = await cloudinary.uploader.upload(
+        `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
+        {
+          folder: "products",
+        }
+      );
 
-        imageUrls.push(uploadResponse.secure_url);
-      }
+      imageUrls.push(uploadResponse.secure_url);
     }
 
+    // Create product
     const product = await Product.create({
       name,
       description,
@@ -69,11 +95,11 @@ export const addProduct = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Add Product Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message || "Internal Server Error",
     });
   }
 };

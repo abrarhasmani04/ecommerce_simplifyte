@@ -10,6 +10,6 @@ export const placeOrderValidation = [
   body("paymentMethod")
     .notEmpty()
     .withMessage("Payment method is required")
-    .isIn(["COD", "ONLINE"])
+    .isIn(["COD", "Razorpay"])
     .withMessage("Payment method must be COD or ONLINE"),
 ];
