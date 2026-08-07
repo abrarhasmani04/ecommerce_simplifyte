@@ -15,7 +15,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://ecommerce-simplifyte-cusq.onrender.com",
         changeOrigin: true,
         secure: false,
         // Disable keep-alive — fixes Vite proxy 500 bug on keep-alive responses
