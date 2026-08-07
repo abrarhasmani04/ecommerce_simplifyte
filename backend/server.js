@@ -16,7 +16,7 @@ import wishlistRoute from "./routes/wishlistRoute.js";
 import adminRoute from "./routes/adminRoute.js";
 import sellerAppRoute from './routes/sellerAppRouter.js'
 import helmet from 'helmet'
-import rateLimiter from "./middlewares/rateLimiter.js";
+// import rateLimiter from "./middlewares/rateLimiter.js";
 import morgan from "morgan";
 import compression from "compression";
 import { fileURLToPath } from "url";
@@ -50,7 +50,7 @@ app.use(cookieParser());
 app.use(compression())
 app.use(morgan('dev'))
 
-app.use(rateLimiter);
+//  app.use(rateLimiter);
 
 
 app.use("/api", authRoute);
