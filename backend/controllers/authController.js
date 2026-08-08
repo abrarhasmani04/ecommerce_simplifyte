@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import generateOTP from "../utils/generateOTP.js";
 import sendEmail from "../services/sendEmail.js";
 
- const registerUser = async (req, res) => {
+const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -22,7 +22,6 @@ import sendEmail from "../services/sendEmail.js";
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-
       // Already verified user
       if (existingUser.isVerified) {
         return res.status(400).json({
@@ -35,24 +34,41 @@ import sendEmail from "../services/sendEmail.js";
       const otp = generateOTP();
 
       existingUser.otp = otp;
-      existingUser.otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+      existingUser.otpExpiry = new Date(
+        Date.now() + 5 * 60 * 1000
+      );
 
       await existingUser.save();
 
-      await sendEmail(
-        existingUser.email,
-        "Email Verification",
-        `
-          <h2>Hello ${existingUser.name}</h2>
-          <p>Your new verification OTP is:</p>
-          <h1>${otp}</h1>
-          <p>This OTP is valid for 5 minutes.</p>
-        `
-      );
+      // Send OTP
+      try {
+        await sendEmail(
+          existingUser.email,
+          "Email Verification",
+          `
+            <h2>Hello ${existingUser.name}</h2>
+            <p>Your new verification OTP is:</p>
+            <h1>${otp}</h1>
+            <p>This OTP is valid for 5 minutes.</p>
+          `
+        );
+      } catch (emailError) {
+        console.error(
+          "OTP email failed:",
+          emailError.message
+        );
+
+        return res.status(500).json({
+          success: false,
+          message:
+            "Account exists but OTP email could not be sent. Please try again.",
+        });
+      }
 
       return res.status(200).json({
         success: true,
-        message: "Your account is not verified. A new OTP has been sent to your email.",
+        message:
+          "Your account is not verified. A new OTP has been sent to your email.",
       });
     }
 
@@ -63,10 +79,12 @@ import sendEmail from "../services/sendEmail.js";
     const otp = generateOTP();
 
     // OTP expiry
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+    const otpExpiry = new Date(
+      Date.now() + 5 * 60 * 1000
+    );
 
     // Create new user
-    await User.create({
+    const user = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -75,24 +93,38 @@ import sendEmail from "../services/sendEmail.js";
     });
 
     // Send email
-    await sendEmail(
-      email,
-      "Email Verification",
-      `
-        <h2>Welcome ${name}</h2>
-        <p>Your verification OTP is:</p>
-        <h1>${otp}</h1>
-        <p>This OTP is valid for 5 minutes.</p>
-      `
-    );
+    try {
+      await sendEmail(
+        email,
+        "Email Verification",
+        `
+          <h2>Welcome ${name}</h2>
+          <p>Your verification OTP is:</p>
+          <h1>${otp}</h1>
+          <p>This OTP is valid for 5 minutes.</p>
+        `
+      );
+    } catch (emailError) {
+      console.error(
+        "Verification email failed:",
+        emailError.message
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Account created, but verification email could not be sent. Please try registering again.",
+      });
+    }
 
     return res.status(201).json({
       success: true,
-      message: "Registration successful. OTP sent to your email.",
+      message:
+        "Registration successful. OTP sent to your email.",
     });
 
   } catch (error) {
-    console.log(error);
+    console.error("Registration error:", error);
 
     return res.status(500).json({
       success: false,
