@@ -159,3 +159,19 @@
 .cart-icon-shake {
   animation: cart-shake 0.4s ease forwards;
 }
+
+/* ── Auth form inputs — light theme ── */
+.al-card input::placeholder {
+  color: #9ca3af;
+}
+.al-card input:-webkit-autofill,
+.al-card input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a;
+}
+
+/* Mobile: hide logo on desktop (left panel shows it) */
+@media (min-width: 1024px) {
+  .al-mobile-logo { display: none !important; }
+}

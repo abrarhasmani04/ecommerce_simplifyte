@@ -286,12 +286,27 @@ export const updateOrderStatus = async (req, res) => {
       });
     }
 
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id)
+      .populate({ path: 'orderItems.product', select: 'seller' });
 
     if (!order) {
       return res.status(404).json({
         success: false,
         message: "Order not found",
+      });
+    }
+
+    // Block: if every product in this order was uploaded by a seller (role !== admin),
+    // the admin cannot update the status — only the seller manages their own orders.
+    const allBelongToSellers = order.orderItems.every((item) => {
+      const sellerUser = item.product?.seller;
+      return sellerUser && sellerUser.toString() !== req.user._id.toString();
+    });
+
+    if (allBelongToSellers) {
+      return res.status(403).json({
+        success: false,
+        message: "You cannot update the status of orders belonging to other sellers",
       });
     }
 

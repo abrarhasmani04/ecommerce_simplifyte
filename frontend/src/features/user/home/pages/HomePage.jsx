@@ -8,8 +8,13 @@ import Newsletter from "../components/Newsletter";
 const HomePage = () => {
   return (
     <div
-      className="mx-auto max-w-7xl px-6 pb-20 pt-6"
-      style={{ backgroundColor: "#ffffff" }}
+      style={{
+        maxWidth: "1280px",
+        margin: "0 auto",
+        padding: "24px 24px 80px",
+        backgroundColor: "#f8fafc",
+        minHeight: "100vh",
+      }}
     >
       <Hero />
       <Categories />

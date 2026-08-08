@@ -18,8 +18,9 @@ export default defineConfig({
         target: "https://ecommerce-simplifyte-cusq.onrender.com",
         changeOrigin: true,
         secure: false,
-        // Disable keep-alive — fixes Vite proxy 500 bug on keep-alive responses
-        headers: { connection: "close" },
+        timeout: 30000,
+        proxyTimeout: 30000,
+        headers: { connection: "keep-alive" },
         configure: (proxy) => {
           proxy.on("error", (_err, _req, res) => {
             if (!res.headersSent) {

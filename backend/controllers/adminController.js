@@ -94,10 +94,9 @@ export const getDashboard = async (req, res) => {
 };
 
 
-export const getRecentOrders = async (req,res)=>{
+export const getRecentOrders = async (req, res) => {
 
-    try{
-
+  try {
         const recentOrders = await Order.find()
     .populate('user','name email')
    .populate({
@@ -113,22 +112,21 @@ export const getRecentOrders = async (req,res)=>{
     .limit(7)
 
     res.status(200).json({
-        success:true,
-        count:recentOrders.length,
-        recentOrders
-   })
-    }
-    catch(error)
-    {
-        res.status(500).json({
-            success:false,
-            message:error.message
-        })
-    }
+      success: true,
+      count: recentOrders.length,
+      recentOrders
+    })
+  }
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
 
 }
 
-export const getAllOrders = async (req,res)=>{
+export const getAllOrders = async (req, res) => {
 
     try{
 const recentOrders = await Order.find()
@@ -144,18 +142,17 @@ const recentOrders = await Order.find()
       .sort({ createdAt: -1 });
 
     res.status(200).json({
-        success:true,
-        count:recentOrders.length,
-        recentOrders
-   })
-    }
-    catch(error)
-    {
-        res.status(500).json({
-            success:false,
-            message:error.message
-        })
-    }
+      success: true,
+      count: recentOrders.length,
+      recentOrders
+    })
+  }
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
 
 }
 
@@ -192,10 +189,35 @@ export const getLowStock = async (req,res)=>{
     .sort({stock:1})
 
     return res.status(200).json({
-        sucess:true,
-        count:lowStockProducts.length,
-        products:lowStockProducts
-    })
+      success: true,
+      message: "Sellers fetched successfully",
+      count: sellers.length,
+      sellers,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+export const getLowStock = async (req, res) => {
+  const lowStockProducts = await Product.find({
+    stock: { $lt: 10 },
+    isActive: true
+  })
+    .populate('category', 'name ')
+    .select('name brand stock price images category')
+    .sort({ stock: 1 })
+
+  return res.status(200).json({
+    sucess: true,
+    count: lowStockProducts.length,
+    products: lowStockProducts
+  })
 
 }
 
@@ -515,15 +537,15 @@ export const updateSellerApplication = async (req, res) => {
     await user.save();
 
     // Send email
-try {
-  if (status === "Approved") {
-    console.log("Status:", status);
-console.log("User Email:", user.email);
-console.log("User Name:", user.name);
-    await sendEmail(
-      user.email,
-      "Seller Application Approved",
-      `
+    try {
+      if (status === "Approved") {
+        console.log("Status:", status);
+        console.log("User Email:", user.email);
+        console.log("User Name:", user.name);
+        await sendEmail(
+          user.email,
+          "Seller Application Approved",
+          `
       <h2>Congratulations 🎉</h2>
 
       <p>Hello ${user.name},</p>
@@ -534,14 +556,14 @@ console.log("User Name:", user.name);
 
       <p>Happy Selling!</p>
       `
-    );
-  }
+        );
+      }
 
-  if (status === "Rejected") {
-    await sendEmail(
-      user.email,
-      "Seller Application Rejected",
-      `
+      if (status === "Rejected") {
+        await sendEmail(
+          user.email,
+          "Seller Application Rejected",
+          `
       <h2>Seller Application Rejected</h2>
 
       <p>Hello ${user.name},</p>
@@ -552,11 +574,11 @@ console.log("User Name:", user.name);
 
       <p>You can update your details and apply again.</p>
       `
-    );
-  }
-} catch (error) {
-  console.log("Email Error:", error.message);
-}
+        );
+      }
+    } catch (error) {
+      console.log("Email Error:", error.message);
+    }
 
 
     return res.status(200).json({
@@ -621,3 +643,4 @@ export const getAllUsers = async (req, res) => {
     });
   }
 };
+

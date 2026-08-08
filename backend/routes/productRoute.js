@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { addProduct,getProducts,getProductById, updateProduct, deleteProduct,} from '../controllers/productController.js'
+import { addProduct, getProducts, getProductById, updateProduct, deleteProduct } from '../controllers/productController.js'
 import authMiddleware from "../middlewares/authMiddleware.js";
 import authorizeRoles from "../middlewares/authorizeRoles.js";
 import upload from '../middlewares/MulterMiddleware.js';
