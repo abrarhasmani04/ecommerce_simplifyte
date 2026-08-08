@@ -111,31 +111,33 @@ export const verifyPayment = async (req, res) => {
     order.paidAt = new Date();
 
     await order.save();
-    try {
-  await sendEmail(
-    req.user.email,
-    "Payment Successful",
-    `
-      <h2>Payment Successful 🎉</h2>
 
-      <p>Hello ${req.user.name},</p>
+// Respond to frontend immediately
+res.status(200).json({
+  success: true,
+  message: "Payment verified successfully",
+  order,
+});
 
-      <p>Your payment has been received.</p>
+// Send email separately
+sendEmail(
+  req.user.email,
+  "Payment Successful",
+  `
+    <h2>Payment Successful 🎉</h2>
 
-      <p>Order ID: ${order._id}</p>
+    <p>Hello ${req.user.name},</p>
 
-      <p>Total: ₹${order.totalPrice}</p>
-    `
-  );
-} catch (error) {
-  console.log(error.message);
-}
+    <p>Your payment has been received successfully.</p>
 
-    res.status(200).json({
-      success: true,
-      message: "Payment verified successfully",
-      order,
-    });
+    <p>Order ID: ${order._id}</p>
+
+    <p>Total: ₹${order.totalPrice}</p>
+  `
+).catch((error) => {
+  console.error("Payment email failed:", error.message);
+});
+
 
   } catch (error) {
     res.status(500).json({
