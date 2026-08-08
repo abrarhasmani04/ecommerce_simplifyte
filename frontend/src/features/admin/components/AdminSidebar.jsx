@@ -66,7 +66,7 @@ const AdminSidebar = ({ isOpen }) => {
               </div>
               <div>
                 <h2 className="font-bold text-slate-800">Admin Panel</h2>
-                <p className="text-xs text-slate-500">Simplifyte</p>
+                <p className="text-xs text-slate-500">TrendWave</p>
               </div>
             </div>
           ) : (

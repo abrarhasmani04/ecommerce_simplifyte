@@ -22,7 +22,7 @@ import {
   verifyRazorpayPaymentApi,
 } from "@/services/paymentApi";
 
-// ─── Empty fields ────────────────────────────────────────────────────────────
+
 const emptyForm = {
   fullName: "",
   phone: "",
@@ -35,19 +35,17 @@ const emptyForm = {
   addressType: "Home",
 };
 
-// ─── Field config ─────────────────────────────────────────────────────────────
 const FIELDS = [
-  { name: "fullName",     label: "Full Name",       placeholder: "John Doe",        col: 1 },
-  { name: "phone",        label: "Phone",           placeholder: "+91 98765 43210", col: 1 },
+  { name: "fullName",     label: "Full Name",       placeholder: "Name",        col: 1 },
+  { name: "phone",        label: "Phone",           placeholder: "Phone number", col: 1 },
   { name: "addressLine1", label: "Address Line 1",  placeholder: "House / Flat no., Street", col: 2 },
   { name: "addressLine2", label: "Address Line 2",  placeholder: "Landmark, Colony (optional)", col: 2, required: false },
-  { name: "city",         label: "City",            placeholder: "Mumbai",          col: 1 },
-  { name: "state",        label: "State",           placeholder: "Maharashtra",     col: 1 },
+  { name: "city",         label: "City",            placeholder: "Bhavnagar",          col: 1 },
+  { name: "state",        label: "State",           placeholder: "Gujarat",     col: 1 },
   { name: "country",      label: "Country",         placeholder: "India",           col: 1 },
   { name: "postalCode",   label: "Postal Code",     placeholder: "400001",          col: 1 },
 ];
 
-// ─── Address Card ─────────────────────────────────────────────────────────────
 const AddressCard = ({ address, selected, onSelect, onEdit, onDelete }) => {
   const Icon = address.addressType === "Office" ? Briefcase : Home;
 
@@ -114,7 +112,6 @@ const AddressCard = ({ address, selected, onSelect, onEdit, onDelete }) => {
   );
 };
 
-// ─── Address Mini-Form ────────────────────────────────────────────────────────
 const AddressForm = ({ initial, onSave, onCancel, submitting, error }) => {
   const [form, setForm] = useState(initial ?? emptyForm);
   const [errors, setErrors] = useState({});
@@ -236,7 +233,7 @@ const AddressForm = ({ initial, onSave, onCancel, submitting, error }) => {
   );
 };
 
-// ─── Checkout Page ────────────────────────────────────────────────────────────
+
 const CheckoutPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -291,7 +288,7 @@ const CheckoutPage = () => {
 
   const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
 
-  // ── helper: load Razorpay SDK script once ──────────────────────────────────
+
   const loadRazorpayScript = () =>
     new Promise((resolve) => {
       if (document.getElementById("razorpay-sdk")) {
@@ -318,7 +315,6 @@ const CheckoutPage = () => {
         paymentMethod,
       });
 
-      // ── COD: done ──────────────────────────────────────────────────────────
       if (paymentMethod === "COD") {
         dispatch(clearCart());
         toast.success("Order placed successfully!");
@@ -326,7 +322,7 @@ const CheckoutPage = () => {
         return;
       }
 
-      // ── Razorpay ───────────────────────────────────────────────────────────
+    
       const sdkLoaded = await loadRazorpayScript();
       if (!sdkLoaded) {
         setOrderError("Failed to load Razorpay. Check your internet connection.");

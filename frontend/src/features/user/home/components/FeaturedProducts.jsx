@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Star, ArrowRight } from "lucide-react";
 import ProductCard from "../../products/components/ProductCard";
 import api from "@/services/axios";
 
@@ -12,7 +13,6 @@ const FeaturedProducts = () => {
       .get("/product/", { params: { isFeatured: true } })
       .then(({ data }) => {
         const list = Array.isArray(data) ? data : data.products ?? [];
-        // Keep only featured products (double-check in case API doesn't filter)
         setProducts(list.filter((p) => p.isFeatured));
       })
       .catch(() => {})
@@ -21,18 +21,17 @@ const FeaturedProducts = () => {
 
   if (loading) {
     return (
-      <section className="mt-14">
-        <h2 className="mb-8 text-3xl font-bold">Featured Products</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <section style={{ marginTop: "60px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "28px" }}>
+          <h2 style={{ margin: 0, fontSize: "1.55rem", fontWeight: 800, color: "#0f172a" }}>Featured Products</h2>
+          <div style={{ flex: 1, height: "2px", background: "linear-gradient(to right, #e2e8f0, transparent)" }} />
+        </div>
+        <div className="product-grid-fp">
           {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="animate-pulse rounded-xl border bg-white p-4 space-y-3"
-            >
-              <div className="h-48 rounded-lg bg-gray-100" />
-              <div className="h-4 w-3/4 rounded bg-gray-100" />
-              <div className="h-4 w-1/2 rounded bg-gray-100" />
-              <div className="h-9 rounded-lg bg-gray-100" />
+            <div key={i} className="animate-pulse" style={{ borderRadius: "14px", border: "1px solid #f1f5f9", padding: "16px", background: "#fff" }}>
+              <div style={{ height: "180px", borderRadius: "10px", background: "#f1f5f9", marginBottom: "12px" }} />
+              <div style={{ height: "12px", borderRadius: "6px", background: "#f1f5f9", width: "75%", marginBottom: "8px" }} />
+              <div style={{ height: "12px", borderRadius: "6px", background: "#f1f5f9", width: "50%" }} />
             </div>
           ))}
         </div>
@@ -43,18 +42,24 @@ const FeaturedProducts = () => {
   if (products.length === 0) return null;
 
   return (
-    <section className="mt-14">
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-3xl font-bold">Featured Products</h2>
+    <section style={{ marginTop: "60px" }}>
+      {/* Section header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "28px", flexWrap: "wrap", gap: "12px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#fffbeb", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Star size={18} color="#f59e0b" fill="#f59e0b" />
+          </div>
+          <h2 style={{ margin: 0, fontSize: "1.55rem", fontWeight: 800, color: "#0f172a" }}>Featured Products</h2>
+        </div>
         <Link
           to="/products"
-          className="text-sm font-medium text-blue-600 hover:underline"
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "0.82rem", fontWeight: 600, color: "#2563eb", textDecoration: "none", background: "#eff6ff", borderRadius: "8px", padding: "6px 14px" }}
         >
-          View All
+          View All <ArrowRight size={14} />
         </Link>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="product-grid-fp">
         {products.map((product) => (
           <ProductCard
             key={product._id}
@@ -69,6 +74,11 @@ const FeaturedProducts = () => {
           />
         ))}
       </div>
+
+      <style>{`
+        .product-grid-fp { display: grid; gap: 18px; grid-template-columns: repeat(2, 1fr); }
+        @media (min-width: 768px) { .product-grid-fp { grid-template-columns: repeat(4, 1fr); } }
+      `}</style>
     </section>
   );
 };

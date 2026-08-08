@@ -65,7 +65,7 @@ const SellerSidebar = ({ isOpen }) => {
               </div>
               <div>
                 <h2 className="font-bold text-slate-800">Seller Panel</h2>
-                <p className="text-xs text-slate-500">E-Commerce</p>
+                <p className="text-xs text-slate-500">TrendWave</p>
               </div>
             </div>
           ) : (

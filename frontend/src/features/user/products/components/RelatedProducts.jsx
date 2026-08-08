@@ -23,7 +23,7 @@ const RelatedProducts = ({ products = [] }) => {
             <Link to={`/product/${p._id}`}>
               <div className="overflow-hidden rounded-xl bg-gray-50">
                 <img
-                  src={p.images?.[0] ?? ""}
+                  src={p.images?.[0] || null}
                   alt={p.name}
                   className="h-36 w-full object-contain p-2 transition group-hover:scale-105"
                 />
