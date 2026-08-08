@@ -65,7 +65,7 @@ app.use('/api/wishlist',wishlistRoute)
 app.use('/api/admin',adminRoute)
 app.use('/api/seller',sellerAppRoute)
 
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
   res.send("helloww");
 });
 
