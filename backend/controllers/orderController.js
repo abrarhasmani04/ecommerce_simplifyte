@@ -2,6 +2,7 @@ import Order from "../models/orderModel.js";
 import Cart from "../models/cartModel.js";
 import Product from "../models/productModel.js";
 import Address from "../models/addressModel.js";
+import sendEmail from "../services/sendEmail.js";
 
 
 export const placeOrder = async (req, res) => {
@@ -111,6 +112,30 @@ export const placeOrder = async (req, res) => {
       message: "Order placed successfully",
       order,
     });
+
+    try {
+  await sendEmail(
+    req.user.email,
+    "Order Confirmation - TrendWave",
+    `
+      <h2>Order Confirmed 🎉</h2>
+
+      <p>Hello ${req.user.name},</p>
+
+      <p>Your order has been placed successfully.</p>
+
+      <p><strong>Order ID:</strong> ${order._id}</p>
+
+      <p><strong>Total Amount:</strong> Rs. ${order.totalPrice}</p>
+
+      <p><strong>Payment Method:</strong> ${order.paymentMethod}</p>
+
+      <p>Thank you for shopping with <strong>TrendWave</strong>.</p>
+    `
+  );
+} catch (emailError) {
+  console.error("Order Email Error:", emailError.message);
+}
   }
  catch (error) {
   console.error(error);

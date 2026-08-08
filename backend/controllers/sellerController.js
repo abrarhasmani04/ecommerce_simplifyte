@@ -482,6 +482,13 @@ export const updateSellerOrderStatus = async (req, res) => {
 
     await order.save();
 
+     return res.status(200).json({
+      success: true,
+      message: "Order status updated successfully",
+      order,
+    });
+
+
     try {
 
   // Order Shipped Email
@@ -526,12 +533,7 @@ export const updateSellerOrderStatus = async (req, res) => {
   console.log("Email Error:", error.message);
 }
 
-    return res.status(200).json({
-      success: true,
-      message: "Order status updated successfully",
-      order,
-    });
-
+   
   } catch (error) {
     return res.status(500).json({
       success: false,
