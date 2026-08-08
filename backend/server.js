@@ -34,23 +34,23 @@ const app = express();
 
 
 connectDB();
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       directives: {
+//         defaultSrc: ["'self'"],
 
-        imgSrc: [
-          "'self'",
-          "data:",
-          "blob:",
-          "https://images.unsplash.com",
-          "https://*.unsplash.com",
-        ],
-      },
-    },
-  })
-);
+//         imgSrc: [
+//           "'self'",
+//           "data:",
+//           "blob:",
+//           "https://images.unsplash.com",
+//           "https://*.unsplash.com",
+//         ],
+//       },
+//     },
+//   })
+// );
 app.use(
   cors({
     
