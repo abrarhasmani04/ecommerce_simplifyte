@@ -522,6 +522,13 @@ export const updateSellerApplication = async (req, res) => {
     await application.save();
     await user.save();
 
+     return res.status(200).json({
+      success: true,
+      message: `Seller application ${status.toLowerCase()} successfully`,
+      application,
+    });
+
+
     // Send email
     try {
       if (status === "Approved") {
