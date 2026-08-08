@@ -180,6 +180,7 @@ export const getAllSellers = async (req, res) => {
 
 
 export const getLowStock = async (req,res)=>{
+  try{
     const lowStockProducts = await Product.find({
         stock:{$lt:10},
         isActive:true
@@ -204,22 +205,7 @@ export const getLowStock = async (req,res)=>{
 };
 
 
-export const getLowStock = async (req, res) => {
-  const lowStockProducts = await Product.find({
-    stock: { $lt: 10 },
-    isActive: true
-  })
-    .populate('category', 'name ')
-    .select('name brand stock price images category')
-    .sort({ stock: 1 })
 
-  return res.status(200).json({
-    sucess: true,
-    count: lowStockProducts.length,
-    products: lowStockProducts
-  })
-
-}
 
 export const getLowStockProducts = async (req, res) => {
   try {
