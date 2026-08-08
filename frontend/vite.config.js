@@ -15,7 +15,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://ecommerce-simplifyte-cusq.onrender.com",
+        target: "http://192.168.0.181:5000",
         changeOrigin: true,
         secure: false,
         timeout: 30000,
