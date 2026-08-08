@@ -14,11 +14,17 @@ const ProductCard = ({ product }) => {
   const btnRef = useRef(null);
   const [adding, setAdding] = useState(false);
 
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   const isWishlisted = useSelector((state) =>
     state.wishlist.items.some((item) => item.productId === product.id)
   );
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      toast.error("Please login first");
+      return;
+    }
     flyToCart(product.image, btnRef.current);
     setAdding(true);
     setTimeout(() => setAdding(false), 700);
