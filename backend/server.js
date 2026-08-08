@@ -71,7 +71,7 @@ app.get("/", (req, res) => {
 
 
 if (process.env.NODE_ENV === "production") {
-    const frontendDist = path.join(__dirname, "../Frontend/dist");
+    const frontendDist = path.join(__dirname, "../frontend/dist");
     app.use(express.static(frontendDist));
 
     app.get(/^\/(?!api).*/, (_req, res) => {
