@@ -22,7 +22,7 @@ const ProductGallery = ({ images = [], title = "" }) => {
       {/* Main image */}
       <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
         <img
-          src={images[selected]}
+          src={images[selected] || null}
           alt={`${title} - view ${selected + 1}`}
           className="mx-auto h-96 w-full object-contain p-6 transition-all duration-300"
         />
@@ -61,7 +61,7 @@ const ProductGallery = ({ images = [], title = "" }) => {
               }`}
             >
               <img
-                src={src}
+                src={src || null}
                 alt={`${title} thumbnail ${i + 1}`}
                 className="h-full w-full object-contain p-1"
               />

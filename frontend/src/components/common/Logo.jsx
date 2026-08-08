@@ -24,7 +24,7 @@ const TrendWaveLogo = ({ size = "md" }) => {
         color: "#0f172a", lineHeight: 1,
       }}>
         Trend<span style={{
-          background: "linear-gradient(90deg, #2563eb, #7c3aed)",
+          backgroundImage: "linear-gradient(90deg, #2563eb, #7c3aed)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",

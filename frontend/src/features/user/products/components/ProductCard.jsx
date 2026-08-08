@@ -63,7 +63,7 @@ const ProductCard = ({ product }) => {
         <div className="pcard__img-wrap">
           <Link to={`/product/${product.id}`} className="pcard__img-link" tabIndex={-1}>
             <img
-              src={product.image}
+              src={product.image || null}
               alt={product.title}
               className="pcard__img"
             />

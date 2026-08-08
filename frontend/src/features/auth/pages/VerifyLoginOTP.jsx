@@ -36,8 +36,12 @@ const VerifyLoginOTP = () => {
         else navigate("/home", { replace: true });
       }, 1000);
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Invalid OTP. Please try again.");
+      const msg = error?.response?.data?.message;
+      if (!msg && (error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || error.code === "ETIMEDOUT")) {
+        toast.error("Server is starting up. Please wait a moment and try again.");
+      } else {
+        toast.error(msg || "Invalid OTP. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -48,8 +52,12 @@ const VerifyLoginOTP = () => {
       await api.post("/user/login-with-otp", { email });
       toast.success("OTP resent successfully");
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Failed to resend OTP");
+      const msg = error?.response?.data?.message;
+      if (!msg && (error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || error.code === "ETIMEDOUT")) {
+        toast.error("Server is starting up. Please wait a moment and try again.");
+      } else {
+        toast.error(msg || "Failed to resend OTP");
+      }
     }
   };
 
