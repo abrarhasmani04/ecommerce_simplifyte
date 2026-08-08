@@ -34,11 +34,26 @@ const app = express();
 
 
 connectDB();
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
 
-app.use(helmet());
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://images.unsplash.com",
+          "https://*.unsplash.com",
+        ],
+      },
+    },
+  })
+);
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    
     credentials: true,
   }),
 );
