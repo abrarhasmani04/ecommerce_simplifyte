@@ -3,7 +3,7 @@ import axios from "axios";
 const api = axios.create({
   baseURL: "/api",
   withCredentials: true,
-  timeout: 5000,
+  timeout: 30000,
 });
 
 api.interceptors.response.use(
@@ -15,7 +15,14 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const silentCodes = ["ERR_CANCELED", "ECONNABORTED", "ECONNREFUSED", "ECONNRESET", "ERR_NETWORK"];
+    const silentCodes = [
+      "ERR_CANCELED",
+      "ECONNABORTED",
+      "ECONNREFUSED",
+      "ECONNRESET",
+      "ERR_NETWORK",
+      "ETIMEDOUT",
+    ];
     if (!silentCodes.includes(error.code) && !status) {
       console.error(
         "[API Error]",

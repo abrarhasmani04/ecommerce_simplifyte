@@ -192,7 +192,7 @@ const Hero = () => {
           {/* Headline */}
           <h1 style={{ margin: "0 0 18px", fontWeight: 800, fontSize: "clamp(1.9rem, 4.2vw, 3.1rem)", lineHeight: 1.13, color: "#f1f5f9", maxWidth: "620px" }}>
             {slide.headline[0]}{" "}
-            <span style={{ background: slide.accentGradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            <span style={{ backgroundImage: slide.accentGradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               {slide.headline[1]}
             </span>{" "}
             {slide.headline[2]}

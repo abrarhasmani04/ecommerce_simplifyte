@@ -23,8 +23,12 @@ const LoginOTP = () => {
       toast.success(response.data.message || "OTP sent successfully.");
       setTimeout(() => navigate("/verify-login-otp", { state: { email } }), 1200);
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Failed to send OTP. Please try again.");
+      const msg = error?.response?.data?.message;
+      if (!msg && (error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || error.code === "ETIMEDOUT")) {
+        toast.error("Server is starting up. Please wait a moment and try again.");
+      } else {
+        toast.error(msg || "Failed to send OTP. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

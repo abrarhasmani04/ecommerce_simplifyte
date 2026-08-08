@@ -27,9 +27,9 @@ const AuthInitializer = ({ children }) => {
           dispatch(clearWishlist());
           dispatch(clearCart());
         }
-      } catch (error) {
+      } catch {
+        // 401 = not logged in (expected); any other error = treat as logged out
         if (!mounted) return;
-
         dispatch(clearUser());
         dispatch(clearWishlist());
         dispatch(clearCart());

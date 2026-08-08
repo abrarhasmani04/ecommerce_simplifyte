@@ -15,10 +15,12 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://ecommerce-simplifyte-cusq.onrender.com",
         changeOrigin: true,
         secure: false,
-        headers: { connection: "close" },
+        timeout: 30000,
+        proxyTimeout: 30000,
+        headers: { connection: "keep-alive" },
         configure: (proxy) => {
           proxy.on("error", (_err, _req, res) => {
             if (!res.headersSent) {
