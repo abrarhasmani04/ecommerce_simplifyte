@@ -2,6 +2,7 @@ import { isRejected } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 
 const SILENT_ACTIONS = new Set([
+  "cart/addItem/rejected",
   "cart/getMyCart/rejected",
   "wishlist/fetch/rejected",
   "address/fetchAll/rejected",
