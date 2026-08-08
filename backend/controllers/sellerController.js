@@ -52,6 +52,12 @@ export const applySeller = async (req, res) => {
       aboutBusiness,
     });
 
+     return res.status(201).json({
+      success: true,
+      message: "Seller application submitted successfully",
+      application,
+    });
+
      try {
       await sendEmail(
         admin.email,
@@ -74,11 +80,7 @@ export const applySeller = async (req, res) => {
       console.log("Email Error:", error.message);
     }
 
-    return res.status(201).json({
-      success: true,
-      message: "Seller application submitted successfully",
-      application,
-    });
+   
 
   } catch (error) {
     return res.status(500).json({
