@@ -97,11 +97,19 @@ export const getDashboard = async (req, res) => {
 export const getRecentOrders = async (req, res) => {
 
   try {
-
-    const recentOrders = await Order.find()
-      .populate('user', 'name email')
-      .sort({ createAt: -1 })
-      .limit(10)
+        const recentOrders = await Order.find()
+    .populate('user','name email')
+   .populate({
+        path: "orderItems.product",
+        select:"name images price seller",
+        populate: {
+          path: "seller",
+          select: "name email",
+        },
+      })
+    
+    .sort({createAt: -1})
+    .limit(7)
 
     res.status(200).json({
       success: true,
@@ -120,12 +128,18 @@ export const getRecentOrders = async (req, res) => {
 
 export const getAllOrders = async (req, res) => {
 
-  try {
-
-    const recentOrders = await Order.find()
-      .populate('user', 'name email')
-      .sort({ createAt: -1 })
-
+    try{
+const recentOrders = await Order.find()
+      .populate("user", "name email")
+      .populate({
+        path: "orderItems.product",
+        select:"name images price seller",
+        populate: {
+          path: "seller",
+          select: "name email",
+        },
+      })
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -148,6 +162,31 @@ export const getAllSellers = async (req, res) => {
     const sellers = await User.find({ role: "seller" })
       .select("-password")
       .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Sellers fetched successfully",
+      count: sellers.length,
+      sellers,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+export const getLowStock = async (req,res)=>{
+    const lowStockProducts = await Product.find({
+        stock:{$lt:10},
+        isActive:true
+    })
+    .populate('category','name ')
+    .select('name brand stock price images category')
+    .sort({stock:1})
 
     return res.status(200).json({
       success: true,
