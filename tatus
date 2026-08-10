@@ -1,0 +1,29 @@
+[33mcommit a5dd6d401d8b21b70cd07e4b40c1beef629fc1b4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: abrarhasmani04-beep <abrarhasmani04@gmail.com>
+Date:   Mon Aug 10 15:51:24 2026 +0530
+
+    Remove environment file from repository
+
+[33mcommit d45eae147faadfe3e84c571497b6058c5eedbfc7[m
+Author: abrarhasmani04-beep <abrarhasmani04@gmail.com>
+Date:   Mon Aug 10 15:34:07 2026 +0530
+
+    configure new email system
+
+[33mcommit 20be66d0862bcabeae458567c749e8397a15992e[m[33m ([m[1;31morigin/seller-api[m[33m, [m[1;32mseller-api[m[33m)[m
+Author: abrarhasmani04-beep <abrarhasmani04@gmail.com>
+Date:   Mon Aug 3 11:57:10 2026 +0530
+
+    seller and admin api
+
+[33mcommit 10c081b4270b98b9c9c2604df4390054a813b7d6[m
+Author: abrarhasmani04-beep <abrarhasmani04@gmail.com>
+Date:   Tue Jul 28 18:46:16 2026 +0530
+
+    add product and category
+
+[33mcommit 56bfb1553d4715ea0485676aeadc0cccf2a361f0[m[33m ([m[1;31morigin/login-api[m[33m, [m[1;32mlogin-api[m[33m)[m
+Author: abrarhasmani04-beep <abrarhasmani04@gmail.com>
+Date:   Mon Jul 27 19:25:37 2026 +0530
+
+    Add login API and authentication features
