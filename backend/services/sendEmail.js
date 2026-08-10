@@ -1,36 +1,27 @@
-import nodemailer from "nodemailer";
-
+import { Resend } from "resend";
 import dotenv from "dotenv";
 
-const result = dotenv.config();
+dotenv.config();
 
-
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
-
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log(
-  "EMAIL_PASSWORD exists:",
-  !!process.env.EMAIL_PASSWORD
-);
-
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (to, subject, html) => {
   try {
-    await transporter.sendMail({
-      from: `"TrendWave" <${process.env.EMAIL_USER}>`,
-      to,
+    const { data, error } = await resend.emails.send({
+      from: "TrendWave <onboarding@resend.dev>",
+      to: [to],
       subject,
       html,
     });
 
-    console.log("Email sent successfully");
+    if (error) {
+      console.error("Resend Email Error:", error);
+      throw new Error(error.message);
+    }
+
+    console.log("Email sent successfully:", data?.id);
+
+    return data;
   } catch (error) {
     console.error("Email Error:", error.message);
     throw error;
