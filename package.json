@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/abrarhasmani04/ecommerce_simplifyte/issues"
   },
-  "homepage": "https://github.com/abrarhasmani04/ecommerce_simplifyte#readme"
+  "homepage": "https://github.com/abrarhasmani04/ecommerce_simplifyte#readme",
+  "dependencies": {
+    "axios": "^1.19.0"
+  }
 }

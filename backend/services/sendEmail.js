@@ -1,34 +1,43 @@
-import { Resend } from "resend";
+import axios from "axios";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-console.log(
-  "RESEND API KEY EXISTS:",
-  !!process.env.RESEND_API_KEY
-);
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const sendEmail = async (to, subject, html) => {
   try {
-    const { data, error } = await resend.emails.send({
-      from: "TrendWave <onboarding@resend.dev>",
-      to: [to],
-      subject,
-      html,
-    });
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: "TrendWave",
+          email: process.env.BREVO_EMAIL,
+        },
+        to: [
+          {
+            email: to,
+          },
+        ],
+        subject: subject,
+        htmlContent: html,
+      },
+      {
+        headers: {
+          "api-key": process.env.BREVO_API_KEY,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
 
-    if (error) {
-      console.error("❌ Resend Email Error:", error);
-      throw new Error(error.message);
-    }
+    console.log("Email sent successfully:", response.data);
 
-    console.log("✅ Email sent successfully:", data?.id);
-
-    return data;
+    return response.data;
   } catch (error) {
-    console.error("❌ Email Error:", error);
+    console.error(
+      "Email Error:",
+      error.response?.data || error.message
+    );
+
     throw error;
   }
 };
