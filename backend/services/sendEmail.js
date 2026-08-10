@@ -14,10 +14,17 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log(
+  "EMAIL_PASSWORD exists:",
+  !!process.env.EMAIL_PASSWORD
+);
+
+
 const sendEmail = async (to, subject, html) => {
   try {
     await transporter.sendMail({
-      from: `"EasyCode" <${process.env.EMAIL_USER}>`,
+      from: `"TrendWave" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
