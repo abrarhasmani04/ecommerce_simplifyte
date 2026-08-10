@@ -18,11 +18,19 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    // Normalize email
+    const normalizedEmail = email.trim().toLowerCase();
 
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    // ==========================================
+    // USER ALREADY EXISTS
+    // ==========================================
     if (existingUser) {
-      // Already verified user
+      // Already verified
       if (existingUser.isVerified) {
         return res.status(400).json({
           success: false,
@@ -30,7 +38,7 @@ const registerUser = async (req, res) => {
         });
       }
 
-      // User exists but not verified
+      // Existing but not verified
       const otp = generateOTP();
 
       existingUser.otp = otp;
@@ -40,23 +48,38 @@ const registerUser = async (req, res) => {
 
       await existingUser.save();
 
-      // Send OTP
+      console.log("========== REGISTER OTP ==========");
+      console.log("Email:", existingUser.email);
+      console.log("OTP:", otp);
+      console.log("==================================");
+
       try {
         await sendEmail(
           existingUser.email,
           "Email Verification",
           `
-            <h2>Hello ${existingUser.name}</h2>
-            <p>Your new verification OTP is:</p>
-            <h1>${otp}</h1>
-            <p>This OTP is valid for 5 minutes.</p>
+            <div>
+              <h2>Hello ${existingUser.name}</h2>
+
+              <p>Your new verification OTP is:</p>
+
+              <h1>${otp}</h1>
+
+              <p>This OTP is valid for 5 minutes.</p>
+            </div>
           `
+        );
+
+        console.log(
+          "✅ Registration OTP email sent to:",
+          existingUser.email
         );
       } catch (emailError) {
         console.error(
-          "OTP email failed:",
-          emailError.message
+          "❌ Registration OTP email failed:"
         );
+
+        console.error(emailError);
 
         return res.status(500).json({
           success: false,
@@ -72,43 +95,59 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password
+    // ==========================================
+    // NEW USER
+    // ==========================================
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Generate OTP
     const otp = generateOTP();
 
-    // OTP expiry
     const otpExpiry = new Date(
       Date.now() + 5 * 60 * 1000
     );
 
-    // Create new user
     const user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       otp,
       otpExpiry,
+      isVerified: false,
     });
 
-    // Send email
+    console.log("========== NEW USER OTP ==========");
+    console.log("Email:", normalizedEmail);
+    console.log("OTP:", otp);
+    console.log("===================================");
+
     try {
       await sendEmail(
-        email,
+        normalizedEmail,
         "Email Verification",
         `
-          <h2>Welcome ${name}</h2>
-          <p>Your verification OTP is:</p>
-          <h1>${otp}</h1>
-          <p>This OTP is valid for 5 minutes.</p>
+          <div>
+            <h2>Welcome ${name}</h2>
+
+            <p>Your verification OTP is:</p>
+
+            <h1>${otp}</h1>
+
+            <p>This OTP is valid for 5 minutes.</p>
+          </div>
         `
+      );
+
+      console.log(
+        "✅ Registration verification email sent to:",
+        normalizedEmail
       );
     } catch (emailError) {
       console.error(
-        "Verification email failed:",
-        emailError.message
+        "❌ Verification email failed:"
       );
+
+      console.error(emailError);
 
       return res.status(500).json({
         success: false,
@@ -122,9 +161,8 @@ const registerUser = async (req, res) => {
       message:
         "Registration successful. OTP sent to your email.",
     });
-
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("❌ Registration error:", error);
 
     return res.status(500).json({
       success: false,
